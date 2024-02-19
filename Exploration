@@ -1,0 +1,73 @@
+
+
+/* Include preprocessor directives */
+#include <FEHLCD.h>
+#include <FEHIO.h>
+#include <FEHUtility.h>
+#include <FEHMotor.h>
+#include <FEHServo.h>
+#include <FEHAccel.h>
+#include <FEHBattery.h>
+#include <FEHBuzzer.h>
+#include <FEHRPS.h>
+#include <FEHSD.h>
+#include <string.h>
+#include <stdio.h>
+
+
+FEHServo servo(FEHServo::Servo0); // declare servo arm
+
+/* Main function to control menu system */
+int main(void)
+{
+
+    while(true)
+    {
+        AnalogInputPin cds(FEHIO::P0_0);
+        if(cds.Value() > 0)
+        {
+            FEHMotor rightMotor(FEHMotor::Motor1, 9.0);
+            FEHMotor leftMotor(FEHMotor::Motor0, 9.0);
+            DigitalInputPin switch0(FEHIO::P2_0);
+            DigitalInputPin switch1(FEHIO::P2_3);
+            DigitalInputPin switch2(FEHIO::P2_1);
+            DigitalInputPin switch3(FEHIO::P2_2);
+
+            // front ones
+            while(switch0.Value() + switch1.Value() != 0)
+            {
+                rightMotor.SetPercent(25);
+                leftMotor.SetPercent(25);
+            }
+            rightMotor.Stop();
+            leftMotor.Stop();
+
+            // back ones
+            while(switch3.Value() && switch3.Value())
+                {
+                    rightMotor.SetPercent(-35);
+                    leftMotor.SetPercent(15);
+                }
+                rightMotor.Stop();
+                leftMotor.Stop();
+
+                /* while(switch0.Value() && switch1.Value())
+                {
+                    rightMotor.SetPercent(25);
+                    leftMotor.SetPercent(25);
+                }
+                rightMotor.Stop();
+                leftMotor.Stop();
+
+                while(switch3.Value() && switch3.Value())
+                {
+                    rightMotor.SetPercent(35);
+                    leftMotor.SetPercent(-15);
+                }
+                rightMotor.Stop();
+                leftMotor.Stop();*/
+
+            }
+        
+    }
+}
