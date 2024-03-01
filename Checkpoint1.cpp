@@ -1,5 +1,4 @@
 
-// AM 02/03/20
 
 /* Include preprocessor directives */
 #include <FEHIO.h>
@@ -29,10 +28,10 @@
 #define turn_speed 25
 
 // turns
-#define left90 1300.0
-#define left45 650.0
-#define right90 365.0
-#define right45 182.5
+#define left90 240.0
+#define left45 115.0
+#define right90 295.0
+#define right45 147.5
 
 //Encoder has 318 counts per revolution
 //wheel radius and pi can be constants
@@ -112,8 +111,13 @@ int main(void)
     DigitalEncoder right_encoder(FEHIO :: P0_0);
     DigitalEncoder left_encoder(FEHIO :: P3_0);
 
+    // while loop to sleep until cds cell is on
+    while(Cds_cell.Value() >= 1.0){
+        Sleep(0.05);
+    }
+
     // CHECKPOINT 1
-    // right 45 turn
+    // right 45 turn 
     float right = right45+20;
     turnRight(right, 25, 25, right_encoder, left_encoder, left_motor, right_motor);
 
@@ -123,49 +127,21 @@ int main(void)
 
     // straight 35 inches up ramp
     // changed distance
-    goStraight(29.5, straight_speed, right_encoder, left_encoder, left_motor, right_motor);
+    goStraight(29.5, 35, right_encoder, left_encoder, left_motor, right_motor);
 
     // after ramp
     // turn left 90 after ramp
     // note: back left wheel not turning 
     // turning left too much 
-    float left = left45/2.0;
-    turnLeft(left, turn_speed, 20, right_encoder, left_encoder, left_motor, right_motor);
+    turnLeft(left90, turn_speed, 20, right_encoder, left_encoder, left_motor, right_motor);
 
     // straight 11 inches
-    goStraight(11.0, straight_speed, right_encoder, left_encoder, left_motor, right_motor);
+    goStraight(6.0, straight_speed, right_encoder, left_encoder, left_motor, right_motor);
 
     // right 90 turn
     turnRight(right90, turn_speed, turn_speed, right_encoder, left_encoder, left_motor, right_motor);
 
     // straight 11 inches
-    goStraight(11.0, straight_speed, right_encoder, left_encoder, left_motor, right_motor);
-
-    /**
-    // BONUS POINTS
-    // backwards 11 inches
-    goBackward(11.0, straight_speed, right_encoder, left_encoder, left_motor, right_motor);
-
-    // left 90 turn
-    turnLeft(left90, turn_speed, turn_speed, right_encoder, left_encoder, left_motor, right_motor);
-
-    // straight 2 inches
-    goStraight(2.0, straight_speed, right_encoder, left_encoder, left_motor, right_motor);
-
-    // left 90 turn
-    turnLeft(left90, turn_speed, turn_speed, right_encoder, left_encoder, left_motor, right_motor);
-
-    // straight down the ramp
-    goStraight(8.0, straight_speed, right_encoder, left_encoder, left_motor, right_motor);
-
-    /* test code
-    while(true)
-    {
-        if(Cds_cell.Value() < 1.0)
-        {
-            right_motor.SetPercent(25);
-            left_motor.SetPercent(-25);
-        }
-    } */
+    goStraight(18.0, straight_speed, right_encoder, left_encoder, left_motor, right_motor);
     
 }
