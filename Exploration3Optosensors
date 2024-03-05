@@ -1,0 +1,139 @@
+#include <FEHLCD.h>
+#include <FEHIO.h>
+#include <FEHSD.h>
+#include <FEHUtility.h>
+#include <FEHMotor.h>
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+// Declarations for analog optosensors
+AnalogInputPin right_opto(FEHIO::P2_0);
+AnalogInputPin middle_opto(FEHIO::P2_1);
+AnalogInputPin left_opto(FEHIO::P2_2);
+DigitalEncoder right_encoder(FEHIO::P0_0);
+DigitalEncoder left_encoder(FEHIO::P0_1);
+FEHMotor right_motor(FEHMotor::Motor0,9.0);
+FEHMotor left_motor(FEHMotor::Motor1,9.0);
+
+enum LineStates {
+    MIDDLE,
+    RIGHT,
+    LEFT
+
+};
+
+void move_forward(int percent, int counts) //using encoders
+{
+    //Reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    //Set both motors to desired percent
+    right_motor.SetPercent(percent);
+    left_motor.SetPercent(percent);
+
+    //While the average of the left and right encoder is less than counts,
+    //keep running motors
+    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
+
+    //Turn off motors
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+void turn_right(int percent, int counts){
+    //Reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    //Set both motors to desired percent
+    right_motor.SetPercent(-percent);
+    left_motor.SetPercent(percent);
+
+    //While the average of the left and right encoder is less than counts,
+    //keep running motors
+    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
+
+    //Turn off motors
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+// turn left function
+void turn_left(int percent, int counts){
+    //Reset encoder counts
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+
+    //Set both motors to desired percent
+    right_motor.SetPercent(percent);
+    left_motor.SetPercent(-percent);
+
+    //While the average of the left and right encoder is less than counts,
+    //keep running motors
+    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
+
+    //Turn off motors
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+
+int main() {
+
+    float lowthreshold;
+    float highthreshold;
+    int state = MIDDLE; // Set the initial state
+    while (true) { // I will follow this line forever!
+        switch(state) {
+        // If I am in the middle of the line...
+        case MIDDLE:
+        // Set motor powers for driving straight
+
+    /* Drive */
+
+    if ( /* Right sensor is on line */ ) {
+
+        state = RIGHT; // update a new state
+
+    }
+
+    /* Code for if left sensor is on the line */
+
+    break;
+
+    // If the right sensor is on the line...
+
+    case RIGHT:
+
+    // Set motor powers for right turn
+
+    /* Drive */
+    if( /* I no longer need to turn right… */ ) {
+
+    /* update a new state */
+
+    }
+
+    break;
+
+    // If the left sensor is on the line...
+
+    case LEFT:
+
+    /* Mirror operation of RIGHT state */
+
+    break;
+
+    default: // Error. Something is very wrong.
+
+    break;
+
+}
+
+// Sleep a bit
+
+}
+
+}
