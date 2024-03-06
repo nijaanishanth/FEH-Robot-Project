@@ -1,5 +1,3 @@
-
-
 /* Include preprocessor directives */
 #include <FEHIO.h>
 #include <FEHUtility.h>
@@ -29,7 +27,7 @@
 
 // turns
 #define left90 240.0
-#define left45 115.0
+#define left45 120.0
 #define right90 295.0
 #define right45 147.5
 
@@ -104,7 +102,7 @@ int checkLight(AnalogInputPin Cds_cell){
 // checks color of the light
 char checkLightColor(AnalogInputPin Cds_cell)
 {
-    if(Cds_cell.Value() >= 2.0)
+    if(Cds_cell.Value() >= 1.4)
     {
         return 'b';
     }
@@ -126,73 +124,76 @@ int main(void)
 
     // declare color
     char color;
-
+    
     // while loop to sleep until cds cell is on
-    while(Cds_cell.Value() >= 1.0){
+    while(Cds_cell.Value() >= 1.65){
         Sleep(0.05);
     }
+    
+    goStraight(2.5, 25, right_encoder, left_encoder, left_motor, right_motor);
+    turnLeft(150, turn_speed, turn_speed, right_encoder, left_encoder, left_motor, right_motor);
 
     // CHECKPOINT 2
     // right 45 turn 
-    float right = right45+40;
+    /*
+    float right = right45+60;
     turnRight(right, 25, 25, right_encoder, left_encoder, left_motor, right_motor);
 
     // straight and left to fix turn
     goStraight(4.5, 25, right_encoder, left_encoder, left_motor, right_motor);
-    turnLeft(40, turn_speed, turn_speed, right_encoder, left_encoder, left_motor, right_motor);
+    turnLeft(80, turn_speed, turn_speed, right_encoder, left_encoder, left_motor, right_motor);
+    */
 
     // straight 31 inches up ramp
     // changed distance
-    goStraight(8.0, 35, right_encoder, left_encoder, left_motor, right_motor);
-    goStraight(23.0, 45, right_encoder, left_encoder, left_motor, right_motor);
+    //goStraight(8.0, 35, right_encoder, left_encoder, left_motor, right_motor);
+    goStraight(28.5, 30, right_encoder, left_encoder, left_motor, right_motor);
+    
+    
 
     // after ramp
     // turn left 90 after ramp
     // note: back left wheel not turning 
     // turning left too much 
-    turnLeft(left90, turn_speed, 20, right_encoder, left_encoder, left_motor, right_motor);
-
-    // straight 17 inches
-    goStraight(16.0, 35, right_encoder, left_encoder, left_motor, right_motor);
-
-    // right 90
-    turnRight(right90, turn_speed, 20, right_encoder, left_encoder, left_motor, right_motor);
+    turnLeft(110, turn_speed, 20, right_encoder, left_encoder, left_motor, right_motor);
 
     // straight 16 inches to read light
-    goStraight(16.0, 35, right_encoder, left_encoder, left_motor, right_motor);
-
+    goStraight(24.0, 35, right_encoder, left_encoder, left_motor, right_motor);
+    
     // read light color and store length
+    // no light ~2
+    // red light ~0.71
+    // blue light ~1.5
     float lightLength = 0;
-    while(Cds_cell.Value() >= 1.0){
-        color = checkLightColor(Cds_cell);
+    float lightTurn = 0;
+    while(Cds_cell.Value() > 1.65){
         Sleep(0.05);
     }
+    color = checkLightColor(Cds_cell);
     if(color == 'r')
     {
         LCD.Write("Red");
-        lightLength = 20;
+        Sleep(1000);
+        lightLength = 14.5;
+        lightTurn = 120;
         
     }
     else if(color == 'b')
     {
         LCD.Write("Blue");
-        lightLength = 20;
+        Sleep(1000);
+        lightLength = 8.0;
+        lightTurn = 100;
+
     }
-    /*
+    
     // go backwards after reading light
-    goBackward(16.0, 35, right_encoder, left_encoder, left_motor, right_motor);
+    goBackward(lightLength, 35, right_encoder, left_encoder, left_motor, right_motor);
 
-    // right 90
-    turnRight(right90, turn_speed, 20, right_encoder, left_encoder, left_motor, right_motor);
+    // right based on color
+    turnRight(lightTurn, turn_speed, 20, right_encoder, left_encoder, left_motor, right_motor);
 
-    // straight based on color
-    goStraight(lightLength, 35, right_encoder, left_encoder, left_motor, right_motor);
-
-    // left 90
-    turnLeft(left90, turn_speed, 20, right_encoder, left_encoder, left_motor, right_motor);
-
-    // straight to hit the button
-    goStraight(16.0, 35, right_encoder, left_encoder, left_motor, right_motor);
-    */
+    // straight
+    goStraight(12, 35, right_encoder, left_encoder, left_motor, right_motor);
 
 }
