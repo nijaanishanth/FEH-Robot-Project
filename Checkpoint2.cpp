@@ -147,7 +147,7 @@ int main(void)
     // straight 31 inches up ramp
     // changed distance
     //goStraight(8.0, 35, right_encoder, left_encoder, left_motor, right_motor);
-    goStraight(28.5, 30, right_encoder, left_encoder, left_motor, right_motor);
+    goStraight(31.0, 45, right_encoder, left_encoder, left_motor, right_motor);
     
     
 
