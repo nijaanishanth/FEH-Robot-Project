@@ -23,62 +23,6 @@ enum LineStates {
 
 };
 
-void move_forward(int percent, int counts) //using encoders
-{
-    //Reset encoder counts
-    right_encoder.ResetCounts();
-    left_encoder.ResetCounts();
-
-    //Set both motors to desired percent
-    right_motor.SetPercent(percent);
-    left_motor.SetPercent(percent);
-
-    //While the average of the left and right encoder is less than counts,
-    //keep running motors
-    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
-
-    //Turn off motors
-    right_motor.Stop();
-    left_motor.Stop();
-}
-
-void turn_right(int percent, int counts){
-    //Reset encoder counts
-    right_encoder.ResetCounts();
-    left_encoder.ResetCounts();
-
-    //Set both motors to desired percent
-    right_motor.SetPercent(-percent);
-    left_motor.SetPercent(percent);
-
-    //While the average of the left and right encoder is less than counts,
-    //keep running motors
-    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
-
-    //Turn off motors
-    right_motor.Stop();
-    left_motor.Stop();
-}
-
-// turn left function
-void turn_left(int percent, int counts){
-    //Reset encoder counts
-    right_encoder.ResetCounts();
-    left_encoder.ResetCounts();
-
-    //Set both motors to desired percent
-    right_motor.SetPercent(percent);
-    left_motor.SetPercent(-percent);
-
-    //While the average of the left and right encoder is less than counts,
-    //keep running motors
-    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
-
-    //Turn off motors
-    right_motor.Stop();
-    left_motor.Stop();
-}
-
 
 int main() {
 
@@ -90,17 +34,15 @@ int main() {
         // If I am in the middle of the line...
         case MIDDLE:
         // Set motor powers for driving straight
-        right_motor.SetPercent(25);
+        right_motor.SetPercent(-25);
         left_motor.SetPercent(25);
 
-        /* Drive */
 
         if (right_opto.Value() > 2.0) {
 
             state = RIGHT; // update a new state
 
         }
-        /* Code for if left sensor is on the line */
         if (left_opto.Value() > 2.0) {
 
             state = LEFT; // update a new state
@@ -116,7 +58,7 @@ int main() {
         // Set motor powers for right turn
 
         right_motor.SetPercent(25);
-        left_motor.SetPercent(-25);
+        left_motor.SetPercent(25);
         if(middle_opto.Value() > 2.0) {
 
             state = MIDDLE;
@@ -130,7 +72,7 @@ int main() {
         case LEFT:
 
         right_motor.SetPercent(-25);
-        left_motor.SetPercent(25);
+        left_motor.SetPercent(-25);
         if(middle_opto.Value() > 2.0) {
 
             state = MIDDLE;
