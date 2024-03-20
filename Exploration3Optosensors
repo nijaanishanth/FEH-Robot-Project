@@ -90,50 +90,64 @@ int main() {
         // If I am in the middle of the line...
         case MIDDLE:
         // Set motor powers for driving straight
+        right_motor.SetPercent(25);
+        left_motor.SetPercent(25);
 
-    /* Drive */
+        /* Drive */
 
-    if ( /* Right sensor is on line */ ) {
+        if (right_opto.Value() > 2.0) {
 
-        state = RIGHT; // update a new state
+            state = RIGHT; // update a new state
 
-    }
+        }
+        /* Code for if left sensor is on the line */
+        if (left_opto.Value() > 2.0) {
 
-    /* Code for if left sensor is on the line */
+            state = LEFT; // update a new state
 
-    break;
+        }
 
-    // If the right sensor is on the line...
+        break;
 
-    case RIGHT:
+        // If the right sensor is on the line...
 
-    // Set motor powers for right turn
+        case RIGHT:
 
-    /* Drive */
-    if( /* I no longer need to turn right… */ ) {
+        // Set motor powers for right turn
 
-    /* update a new state */
+        right_motor.SetPercent(25);
+        left_motor.SetPercent(-25);
+        if(middle_opto.Value() > 2.0) {
 
-    }
+            state = MIDDLE;
 
-    break;
+        }
 
-    // If the left sensor is on the line...
+        break;
 
-    case LEFT:
+        // If the left sensor is on the line...
 
-    /* Mirror operation of RIGHT state */
+        case LEFT:
 
-    break;
+        right_motor.SetPercent(-25);
+        left_motor.SetPercent(25);
+        if(middle_opto.Value() > 2.0) {
+
+            state = MIDDLE;
+
+        }
+
+        break;
 
     default: // Error. Something is very wrong.
 
-    break;
+        break;
 
-}
+    }
 
-// Sleep a bit
+    // Sleep a bit
+    Sleep(50);
 
-}
+    }
 
 }
