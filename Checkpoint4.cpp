@@ -139,21 +139,34 @@ void goDown(float inches)
 int main(void)
 {
     // CHECKPOINT 4
+    // while loop to sleep until cds cell is on
+    while(Cds_cell.Value() >= 1.0){
+        Sleep(0.05);
+    }
+
     // pre-ramp
     goStraight(18.0, 25);
     turnLeft(left45, 25, 25);
-    goStraight(8.5, 25);
+    goStraight(9.5, 25);
     turnRight(150.0, 25, 25);
 
     // up the ramp
-    goStraight(30.0, 40);
+    goStraight(29.0, 40);
 
     // post-ramp
     turnRight(right90, 25, 25);
-    goStraight(35.0, 25);
+    goBackward(7.75, 25);
+    goStraight(20.5, 25);
 
-   float up = 0;
-   goUp(6.0);
-   goBackward(3.0, 15);
-   goDown(5.3);
+    // adjust to position
+    turnRight(right90, 25, 25);
+    goBackward(15.0, 25);
+    goStraight(6.25, 25);
+    
+    // stamping the passport
+    Sleep(1.0);
+    goUp(6.0);
+    goBackward(7.0, 25);
+    goDown(5.02);
+
 }
