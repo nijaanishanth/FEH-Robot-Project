@@ -160,9 +160,9 @@ int main(void)
 
     // adjust to position
     Sleep(0.5);
-    turnRight(right90- 5, 25, 25);
+    turnRight(right90- 8, 25, 25);
     goBackward(16.0, 25);
-    goStraight(6.25, 25);
+    goStraight(6.3, 25);
     
     // stamping the passport
     Sleep(1.0);
@@ -173,7 +173,7 @@ int main(void)
     //bonus points
     turnLeft(10,25,25);
     goStraight(4.0,25);
-    
+    turnRight(10.0,25,25);
    
 
 }
