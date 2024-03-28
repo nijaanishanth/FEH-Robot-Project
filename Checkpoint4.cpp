@@ -148,19 +148,20 @@ int main(void)
     goStraight(18.0, 25);
     turnLeft(left45, 25, 25);
     goStraight(9.5, 25);
-    turnRight(150.0, 25, 25);
+    turnRight(140.0, 25, 25);
 
     // up the ramp
     goStraight(29.0, 40);
 
     // post-ramp
-    turnRight(right90, 25, 25);
+    turnRight(right90 - 10, 25, 25);
     goBackward(7.75, 25);
-    goStraight(20.5, 25);
+    goStraight(21.5, 25);
 
     // adjust to position
-    turnRight(right90, 25, 25);
-    goBackward(15.0, 25);
+    Sleep(0.5);
+    turnRight(right90- 5, 25, 25);
+    goBackward(16.0, 25);
     goStraight(6.25, 25);
     
     // stamping the passport
@@ -168,5 +169,11 @@ int main(void)
     goUp(6.0);
     goBackward(7.0, 25);
     goDown(5.02);
+
+    //bonus points
+    turnLeft(10,25,25);
+    goStraight(4.0,25);
+    
+   
 
 }
