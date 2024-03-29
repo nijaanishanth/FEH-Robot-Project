@@ -156,10 +156,10 @@ int main(void)
     // post-ramp
     turnRight(right90 - 10, 25, 25);
     goBackward(7.75, 25);
-    goStraight(20.25, 25);
+    goStraight(21.25, 25);
 
     // adjust to position
-    turnRight(right90, 25, 25);
+    turnRight(right90 - 7.5, 25, 25);
     goBackward(16.0, 25);
     goStraight(6.25, 25);
     
@@ -168,5 +168,10 @@ int main(void)
     goUp(6.0);
     goBackward(7.0, 25);
     goDown(5.02);
+     
+     //bonus points
+    turnLeft(10,25,25);
+    goStraight(4.0,25);
+    turnRight(10.0,25,25);
 
 }
