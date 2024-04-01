@@ -26,10 +26,10 @@
 #define turn_speed 25
 
 // turns
-#define left90 200.0
-#define left45 95
-#define right90 200.0
-#define right45 100.0
+#define left90 195.0
+#define left45 95.0
+#define right90 150.0
+#define right45 80.0
 
 // right and left motors are flipped
 // declare motors & cds cell
@@ -138,62 +138,36 @@ void goDown(float inches)
 /* Main function */
 int main(void)
 {
-    
-    // CHECKPOINT 3
-    //initialize the RCS
-    // team key: D30D1Hj1u
+    // CHECKPOINT 5
+    // initialize RCS
+    // RCS.InitializeTouchMenu("D30D1Hj1u");
 
     // while loop to sleep until cds cell is on
     while(Cds_cell.Value() >= 1.0){
         Sleep(0.05);
     }
 
-    // RCS.InitializeTouchMenu("D30D1Hj1u");
+    // pre ramp adjust to position
+    goBackward(1.0, 25);
+    goStraight(3.0, 25);
+    turnRight(right45 + 50, 25, 25);
+    goStraight(4.0, 25);
+    turnLeft(55, 25, 25);
+    goStraight(9.0, 25);
+    Sleep(0.5);
 
-    int lever_distance = 0;
-    // Check which lever to flip and perform some action
-    // int correctLever = RCS.GetCorrectLever();
-    int correctLever = 0;
-    if(correctLever == 0)
-    {
-        lever_distance = 3.0;
-    } 
-    else if(correctLever == 1)
-    {
-        lever_distance = 6.8;
-    }
-    else if(correctLever == 2)
-    {
-        lever_distance = 10.4;
-    }
+    // up the ramp
+    goStraight(21.5, 35);
 
-    // start hook at the top of rack
-    // go straight 11
-    goStraight(14.850, 25);
+    // post-ramp
+    turnLeft(left90, 25, 25);
 
-    // turn left
-    turnLeft(left45, 25, 25);
+    // drop the luggage
+    goStraight(23.25, 35);
 
-    // go straight till fuel levers
-    goStraight(lever_distance, 25);
+    // go back down
+    goBackward(0.5, 25);
+    turnLeft(left90, 25, 25);
+    goStraight(10.0, 15);
 
-    // move hook down
-    goDown(3.75);
-
-    // backwards
-    goBackward(lever_distance, 25);
-    Sleep(5.0);
-
-    // move down a little
-    goDown(0.9);
-
-    // forwards again
-    goStraight(lever_distance, 25);
-
-    // move hook back up
-    goUp(1.3);
-
-    // go backwards and reset
-    goBackward(lever_distance, 25);
-    goUp(4.075);
-
+}
