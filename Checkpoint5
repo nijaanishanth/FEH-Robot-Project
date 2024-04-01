@@ -174,13 +174,13 @@ int main(void)
     turnRight(right90 + 25, 25, 25);
     goBackward(7.0, 25);
     goStraight(7.0, 25);
-    turnLeft(left90, 25, 25);
-    goStraight(15.0, 25);
+    turnLeft(left90 + 10, 25, 25);
+    goStraight(17.0, 25);
 
     // go down the ramp
     goBackward(0.5, 25);
     turnLeft(left90 - 20, 25, 25);
-    goStraight(18.0, 15);
+    goStraight(20.0, 15);
 
     // post-ramp
     turnLeft(left90, 25, 25);
