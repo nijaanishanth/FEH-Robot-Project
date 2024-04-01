@@ -54,6 +54,18 @@ void goStraight(float inches, int percent){
     left_motor.Stop();
 }
 
+void goStraight2(float inches, int percent){
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+    float num_revolutions = inches/(circ);
+    while(((left_encoder.Counts() + right_encoder.Counts()) / 2) < (318 * num_revolutions)){
+        right_motor.SetPercent(percent);
+        left_motor.SetPercent(-percent);
+    }
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
 void goBackward(float inches, int percent){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -145,9 +157,9 @@ int main(void)
     }
 
     // pre-ramp
-    goStraight(18.0, 25);
-    turnLeft(left45, 25, 25);
-    goStraight(9.5, 25);
+    goStraight(19.0, 25);
+    turnLeft(80.0, 25, 25);
+    goStraight(9.25, 25);
     turnRight(140.0, 25, 25);
 
     // up the ramp
@@ -156,24 +168,23 @@ int main(void)
     // post-ramp
     turnRight(right90 - 10, 25, 25);
     goBackward(7.75, 25);
-    goStraight(21.5, 25);
+    goStraight(21.25, 25);
 
     // adjust to position
-    Sleep(0.5);
-    turnRight(right90- 8, 25, 25);
+    turnRight(right90 - 9.0, 25, 25);
     goBackward(16.0, 25);
-    goStraight(6.3, 25);
+    goStraight(6.25, 25);
     
     // stamping the passport
     Sleep(1.0);
     goUp(6.0);
     goBackward(7.0, 25);
     goDown(5.02);
-
+     
     //bonus points
-    turnLeft(10,25,25);
+    turnLeft(20,25,25);
     goStraight(4.0,25);
-    turnRight(10.0,25,25);
-   
+    turnRight(30.0,25,25);
+    goStraight(4.0,25);
 
 }
