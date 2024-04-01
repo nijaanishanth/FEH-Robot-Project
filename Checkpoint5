@@ -139,20 +139,53 @@ void goDown(float inches)
 int main(void)
 {
     // CHECKPOINT 5
+    // initialize RCS
+    // RCS.InitializeTouchMenu("D30D1Hj1u");
+
     // while loop to sleep until cds cell is on
     while(Cds_cell.Value() >= 1.0){
         Sleep(0.05);
     }
 
-    //pre ramp
-    goBackward(1.0,25);
-    goStraight(2.0,25);
-    turnRight(right45 + 20,25,25);
-    goStraight(2.0,25);
-    turnLeft(35,25,25);
-    goStraight(30,35);
+    // pre ramp adjust to position
+    goBackward(1.0, 25);
+    goStraight(3.0, 25);
+    turnRight(right45 + 50, 25, 25);
+    goStraight(4.0, 25);
+    turnLeft(55, 25, 25);
+    goStraight(9.0, 25);
+    Sleep(0.5);
 
+    // up the ramp
+    goStraight(21.2, 35);
 
-  
+    // post-ramp
+    turnLeft(left90, 25, 25);
+    goBackward(7.0, 25);
+    goStraight(4.0, 25);
+    turnLeft(5, 25, 25);
+
+    // drop the luggage
+    goStraight(15.0, 40);
+
+    // post luggage drop
+    turnRight(5, 25, 25);
+    goBackward(4.0, 25);
+    turnRight(right90 + 25, 25, 25);
+    goBackward(7.0, 25);
+    goStraight(7.0, 25);
+    turnLeft(left90, 25, 25);
+    goStraight(15.0, 25);
+
+    // go down the ramp
+    goBackward(0.5, 25);
+    turnLeft(left90 - 20, 25, 25);
+    goStraight(18.0, 15);
+
+    // post-ramp
+    turnLeft(left90, 25, 25);
+    goStraight(10.0, 25);
+    turnRight(right45+20, 25, 25);
+    goStraight(20.0, 25);
 
 }
