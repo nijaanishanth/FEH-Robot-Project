@@ -150,11 +150,11 @@ int main(void)
     }
 
     // pre ramp adjust to position
-    goBackward(0.5, 25);
-    goStraight(3.0, 25);
+    goBackward(0.75, 25);
+    goStraight(3.25, 25);
     turnRight(right45 + 55, 25, 25);
-    goStraight(4.5, 25);
-    turnLeft(60, 25, 25);
+    goStraight(4.25, 25);
+    turnLeft(64, 25, 25);
     goStraight(9.0, 25);
     Sleep(0.5);
     
@@ -187,7 +187,7 @@ int main(void)
     turnRight(5, 25, 25);
     goStraight(5.0,40);
     Sleep(.5);
-    goBackward(5.0,40);
+    goBackward(2.0,40);
     goBackward(4.0, 25);
     turnRight(right90 + 25, 25, 25);
     goBackward(7.0, 25);
@@ -197,7 +197,7 @@ int main(void)
     goStraight(11.0, 25);
 
     // go down the ramp
-    turnLeft(left90 - 10, 25, 25);
+    turnLeft(left90 - 20, 25, 25);
     goStraight(20.0, 15);
 
     // post-ramp
