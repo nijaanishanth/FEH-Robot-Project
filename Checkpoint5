@@ -1,4 +1,5 @@
 /* Include preprocessor directives */
+/* Include preprocessor directives */
 #include <FEHIO.h>
 #include <FEHUtility.h>
 #include <FEHMotor.h>
@@ -141,7 +142,7 @@ int main(void)
 
     // CHECKPOINT 5
     // initialize RCS
-    RCS.InitializeTouchMenu("D30D1Hj1u");
+    //RCS.InitializeTouchMenu("D30D1Hj1u");
 
     // while loop to sleep until cds cell is on
     while(Cds_cell.Value() >= 1.0){
@@ -149,19 +150,25 @@ int main(void)
     }
 
     // pre ramp adjust to position
-    goBackward(1.0, 25);
+    goBackward(0.5, 25);
     goStraight(3.0, 25);
     turnRight(right45 + 55, 25, 25);
-    goStraight(5.0, 25);
+    goStraight(4.5, 25);
     turnLeft(60, 25, 25);
     goStraight(9.0, 25);
     Sleep(0.5);
-    float add = 0;
+    
+    float add = 0; 
     if(RCS.CurrentRegionLetter() == 'C' || RCS.CurrentRegionLetter() == 'D' || RCS.CurrentRegionLetter() == 'B')
     {
         turnLeft(2.5, 25, 25);
         Sleep(0.5);
         add = 0.5;
+    }else{
+        /*
+            Turn left 4.0 for course A,
+        */
+        turnLeft(3.0,25,25);
     }
 
     // up the ramp
@@ -174,26 +181,31 @@ int main(void)
     turnLeft(5, 25, 25);
 
     // drop the luggage
-    goStraight(15.0, 40);
+    goStraight(14, 40);
 
     // post luggage drop
     turnRight(5, 25, 25);
+    goStraight(5.0,40);
+    Sleep(.5);
+    goBackward(5.0,40);
     goBackward(4.0, 25);
     turnRight(right90 + 25, 25, 25);
     goBackward(7.0, 25);
     goStraight(7.0, 25);
     turnLeft(left90 + 10, 25, 25);
-    goStraight(16.5, 25);
+    Sleep(0.5);
+    goStraight(11.0, 25);
 
     // go down the ramp
-    goBackward(0.25, 25);
-    turnLeft(left90 - 20, 25, 25);
+    turnLeft(left90 - 10, 25, 25);
     goStraight(20.0, 15);
 
     // post-ramp
     turnLeft(left90, 25, 25);
-    goStraight(10.0, 25);
+    goBackward(4.0,25);
+    goStraight(13.0, 25);
     turnRight(right45+20, 25, 25);
     goStraight(20.0, 25);
+    goUp(0.25);
 
 }
