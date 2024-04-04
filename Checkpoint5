@@ -169,7 +169,7 @@ int main(void)
     turnLeft(left45, 25, 25);
     Sleep(0.5);
     goBackward(14.5, 25);
-    turnPivotRight(right90*2 + 45, 25, 0);
+    turnPivotRight(right90*2 + 48, 25, 0);
     goStraight(5.0, 25);
     Sleep(0.5);
 
@@ -199,11 +199,13 @@ int main(void)
 
     // go back to wall
     goBackward(19.0, 25);
-    goStraight(1.25, 25);
-    turnLeft(left90 - 80, 0, 25);
+    goStraight(1.5, 25);
+    turnLeft(left90 *2-20, 0, 25);
 
     // go down the ramp
-    turnLeft(left90 - 20, 25, 25);
+    //turnLeft(left90 - 20, 25, 25);
     goStraight(20.0, 15);
+    //go straight on bottom
+   // turnRight();
     goStraight(10.0, 25);
 }
