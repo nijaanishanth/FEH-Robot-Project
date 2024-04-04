@@ -79,6 +79,18 @@ void turnRight(float counts, int percent_right, int percent_left){
     left_motor.Stop();
 }
 
+// turn right when right wheel = 0
+void turnPivotRight(float counts, int percent_right, int percent_left){
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+    while(left_encoder.Counts() < counts){
+        right_motor.SetPercent(percent_right);
+        left_motor.SetPercent(percent_left);
+    }
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
 // turn left function
 void turnLeft(float counts, int percent_right, int percent_left){
     right_encoder.ResetCounts();
@@ -149,30 +161,20 @@ int main(void)
         Sleep(0.05);
     }
 
-    // pre ramp adjust to position
+    // pre ramp hit the button
     goBackward(0.75, 25);
-    goStraight(3.25, 25);
-    turnRight(right45 + 55, 25, 25);
-    goStraight(4.25, 25);
-    turnLeft(64, 25, 25);
-    goStraight(9.0, 25);
+    goStraight(12.0, 25);
+
+    // adjust to position
+    turnLeft(left45, 25, 25);
     Sleep(0.5);
-    
-    float add = 0; 
-    if(RCS.CurrentRegionLetter() == 'C' || RCS.CurrentRegionLetter() == 'D' || RCS.CurrentRegionLetter() == 'B')
-    {
-        turnLeft(2.5, 25, 25);
-        Sleep(0.5);
-        add = 0.5;
-    }else{
-        /*
-            Turn left 4.0 for course A,
-        */
-        turnLeft(3.0,25,25);
-    }
+    goBackward(14.5, 25);
+    turnPivotRight(right90*2 + 45, 25, 0);
+    goStraight(5.0, 25);
+    Sleep(0.5);
 
     // up the ramp
-    goStraight(20.5 + add, 35);
+    goStraight(20.0, 35);
 
     // post-ramp
     turnLeft(left90, 25, 25);
@@ -191,21 +193,17 @@ int main(void)
     goBackward(4.0, 25);
     turnRight(right90 + 25, 25, 25);
     goBackward(7.0, 25);
-    goStraight(7.0, 25);
+    goStraight(3.0, 25);
     turnLeft(left90 + 10, 25, 25);
     Sleep(0.5);
-    goStraight(11.0, 25);
+
+    // go back to wall
+    goBackward(19.0, 25);
+    goStraight(1.25, 25);
+    turnLeft(left90 - 80, 0, 25);
 
     // go down the ramp
     turnLeft(left90 - 20, 25, 25);
     goStraight(20.0, 15);
-
-    // post-ramp
-    turnLeft(left90, 25, 25);
-    goBackward(4.0,25);
-    goStraight(13.0, 25);
-    turnRight(right45+20, 25, 25);
-    goStraight(20.0, 25);
-    goUp(0.25);
-
+    goStraight(10.0, 25);
 }
