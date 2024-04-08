@@ -170,9 +170,20 @@ int main(void)
     //Lowest value for blue light: 1.6
     //Lowest value for red light: 
     
+    // go to baggage
+    goBackward(1.0,25);
+    goStraight(15.0,25);
+    turnRight(right45, 25, 25);
+
+    // run into baggage
+    goStraight(10.0, 25);
+
+    /*
     //Go to the Fuel Lever
     goBackward(1.0,25);
     goStraight(15.0,25);
+
+
     turnLeft(left45,25,25);
     goStraight(2.0,25);
 
@@ -185,6 +196,7 @@ int main(void)
 
     //Drop off luggage
     goBackward(3.0,25);
+    goUp(0.5);
     turnRight(right45,25,25);
     goStraight(10.0,25);
 
@@ -194,7 +206,7 @@ int main(void)
     goBackward(10.0,25);
 
     //Go up the ramp
-    turnPivotRight(right45*2,25,25);
+    /*turnPivotRight(right45*2,25,25);
     goStraight(21.0,25);
 
     //Align against the wall after the ramp
@@ -234,8 +246,6 @@ int main(void)
     
     //After completing passport stamp, adjust to go back down the ramp
     goStraight(10,25);
-    turnRight(10.0,25,25);
+    turnRight(10.0,25,25);*/
 
-    
-    
 }
