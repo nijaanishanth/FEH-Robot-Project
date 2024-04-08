@@ -147,9 +147,10 @@ void goDown(float inches)
         vex_motor.Stop();
 
 }
+
 char checkLightColor(AnalogInputPin Cds_cell)
 {
-    if(Cds_cell.Value() >= 1.4)
+    if(Cds_cell.Value() >= 1.6)
     {
         return 'b';
     }
@@ -163,75 +164,78 @@ char checkLightColor(AnalogInputPin Cds_cell)
 int main(void)
 {
 
-    // CHECKPOINT 5
-    // initialize RCS
+    // Final code for after the ramp
     //RCS.InitializeTouchMenu("D30D1Hj1u");
 
-    // while loop to sleep until cds cell is on
-    while(Cds_cell.Value() >= 1.0){
-        Sleep(0.05);
-    }
-
-    // pre ramp hit the button
-    goBackward(0.75, 25);
-    goStraight(12.0, 25);
-
-    // adjust to position
-    turnLeft(left45, 25, 25);
-    Sleep(0.5);
-    goBackward(14.5, 25);
-    turnPivotRight(right90*2 + 48, 25, 0);
-    goStraight(5.0, 25);
-    Sleep(0.5);
-
-    // up the ramp
-    goStraight(20.0, 35);
-
-    // post-ramp
-    turnLeft(left90, 25, 25);
-    goBackward(7.0, 25);
-    goStraight(4.0, 25);
-    turnLeft(5, 25, 25);
-
-    // drop the luggage
-    goStraight(14, 40);
-
-    // post luggage drop
-    turnRight(5, 25, 25);
-    goStraight(5.0,40);
-    Sleep(.5);
-    goBackward(2.0,40);
-    goBackward(4.0, 25);
-    turnRight(right90 + 25, 25, 25);
-    goBackward(7.0, 25);
-    goStraight(3.0, 25);
-    turnLeft(left90 + 10, 25, 25);
-    Sleep(0.5);
-
-    // go back to wall
-    goBackward(19.0, 25);
+    //Lowest value for blue light: 1.6
+    //Lowest value for red light: 
     
-    goStraight(5,25);
-    turnRight(right45 - 10,25,25);
-    goStraight(25.0,25);
-    char lightColor = checkLightColor(Cds_cell);
-    LCD.WriteLine(lightColor);
-    Sleep(1.0);
-    goBackward(8.0,25);
-    turnRight(right45, 25,25);
+    //Go to the Fuel Lever
+    goBackward(1.0,25);
+    goStraight(15.0,25);
+    turnLeft(left45,25,25);
     goStraight(2.0,25);
-    
-    //goStraight(1.5, 25);
-    
-    /*
-    //pivot left to go down the ramp
-    turnLeft(left90 *2-20, 0, 25);
 
-    // go down the ramp
-    //turnLeft(left90 - 20, 25, 25);
-    goStraight(20.0, 15);
-    //go straight on bottom
-   // turnRight();
-    goStraight(10.0, 25);
-    */
+    //Lift the fuel lever up
+    goDown(1.5);
+    goBackward(1.0,25);
+    goDown(1.0);
+    goStraight(1.0,25);
+    goUp(2.0);
+
+    //Drop off luggage
+    goBackward(3.0,25);
+    turnRight(right45,25,25);
+    goStraight(10.0,25);
+
+    //Align against the wall before the ramp
+    goBackward(11.0,25);
+    turnLeft(left45,25,25);
+    goBackward(10.0,25);
+
+    //Go up the ramp
+    turnPivotRight(right45*2,25,25);
+    goStraight(21.0,25);
+
+    //Align against the wall after the ramp
+    turnLeft(left45,25,25);
+    goBackward(5.0,25);
+    
+    //Go to the light
+    goStraight(5.0,25);
+    turnRight(right45 + 3,25,25);
+    goStraight(22.0,25);
+
+    //Read the light and right the color to the screen
+    char color = checkLightColor(Cds_cell);
+    LCD.WriteLine(color);
+    Sleep(1.0);
+    
+    //Press the blue ticket button
+    goBackward(5.0,25);
+    turnRight(right45 + 3,25,25);
+    goStraight(4.0,25);
+
+    //Align against the wall
+    goBackward(12.0,25);
+    Sleep(0.5);
+    turnLeft(left45 + 50,25,25);
+    goBackward(20.0,25);
+
+    // positioning to passport stamp
+    goStraight(10.6,25);
+    turnLeft(left90,25,25);
+    goBackward(11.5,25);
+
+    //completing the passport stamp
+    goUp(6.0);
+    goBackward(7.0, 25);
+    goDown(5.02);
+    
+    //After completing passport stamp, adjust to go back down the ramp
+    goStraight(10,25);
+    turnRight(10.0,25,25);
+
+    
+    
 }
