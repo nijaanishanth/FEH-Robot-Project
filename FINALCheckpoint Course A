@@ -67,6 +67,18 @@ void goStraightTime(float time, int percent)
     left_motor.Stop();
 }
 
+void goBackTime(float time, int percent)
+{
+    float start_time = TimeNow();
+    while(TimeNow() - start_time < time)
+    {
+        right_motor.SetPercent(-percent);
+        left_motor.SetPercent(percent);
+    }
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
 void goBackward(float inches, int percent){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -176,10 +188,11 @@ char checkLightColor(AnalogInputPin Cds_cell)
 int main(void)
 {
     // FINAL CODE
-
     // initialize RCS
     // RCS.InitializeTouchMenu("D30D1Hj1u");
 
+    // print battery to screen
+    LCD.Write(Battery.Voltage());
     // while loop to sleep until cds cell is on
     while(Cds_cell.Value() >= 1.0){
         Sleep(0.05);
@@ -189,7 +202,7 @@ int main(void)
     //Lowest value for red light: 
     
     // go to baggage
-    goBackward(1.0,25);
+    goBackTime(0.4,25);
     if(RCS.CurrentRegionLetter() == 'C')
     {
         goStraight(14.0, 25);
@@ -198,64 +211,78 @@ int main(void)
     {
         goStraight(13.0, 25);
     }
-    turnRight(70, 25, 25);
+    if(RCS.CurrentRegionLetter() == 'C')
+    {
+        turnRight(60, 25, 25);
+    }
+    else
+    {
+        turnRight(70, 25, 25);
+    }
 
     // run into baggage
     goStraightTime(1.5, 40);
 
     // go back and reposition
     goBackward(6.25, 25);
-    turnLeft(left90 - 20, 25, 25);
-    goBackward(17.0, 25);
+    turnLeft(left90 - 25, 25, 25);
+    goBackTime(4.0, 25);
 
     // go to the fuel lever
     goStraight(18.0, 25);
 
     //Lift the fuel lever up
-    goDown(1.5);
+    goDown(1.30);
+    goUp(0.5);
     goBackward(3.0,25);
-    goDown(1.0);
+    goDown(1.7);
     goStraight(3.0,25);
-    goUp(2.0);
+    goUp(1.65);
     goBackward(3.0, 25);
-    goUp(1.0);
 
     //Align against the wall before the ramp
-    goBackward(11.0, 25);
-    // MIGHT NOT WORK
+    goBackward(5.0, 25);
     turnRight(50, 25, 25);
-    goBackward(8.0,25);
-    // check these
-    turnPivotRight(right90*2, 25, 0);
+    goBackward(6.0, 25);
+    goBackTime(2.0, 25);
+    turnPivotRight(right90*2 + 40, 25, 0);
     goStraight(5.0, 25);
     Sleep(0.5);
 
     // up the ramp
     goStraight(20.0, 35);
 
-    //Go up the ramp
-    /*turnPivotRight(right45*2,25,25);
-    goStraight(21.0,25);
-
     //Align against the wall after the ramp
-    turnLeft(left45,25,25);
-    goBackward(5.0,25);
+    turnLeft(left90, 25, 25);
+    goBackTime(3.0, 25);
     
     //Go to the light
-    goStraight(5.0,25);
+    goStraight(9.0,25);
     turnRight(right45 + 3,25,25);
-    goStraight(22.0,25);
+    goStraight(20.0,25);
 
     //Read the light and right the color to the screen
     char color = checkLightColor(Cds_cell);
     LCD.WriteLine(color);
     Sleep(1.0);
-    
-    //Press the blue ticket button
-    goBackward(5.0,25);
-    turnRight(right45 + 3,25,25);
-    goStraight(4.0,25);
+    goUp(1.45);
 
+    //Press the correct ticket button
+    float redAdd = 0;
+    if(color == 'b')
+    {
+        goBackward(7.0, 25);
+    }
+    else
+    {
+        goBackward(15.0, 25);
+        redAdd = 3.0;
+    }
+    turnRight(right45 + 3,25,25);
+    goStraight(2.5 + redAdd,25);
+    goStraightTime(1.0, 25);
+
+/*
     //Align against the wall
     goBackward(12.0,25);
     Sleep(0.5);
