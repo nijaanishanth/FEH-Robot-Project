@@ -55,6 +55,18 @@ void goStraight(float inches, int percent){
     left_motor.Stop();
 }
 
+void goStraightTime(float time, int percent)
+{
+    float start_time = TimeNow();
+    while(TimeNow() - start_time < time)
+    {
+        right_motor.SetPercent(percent);
+        left_motor.SetPercent(-percent);
+    }
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
 void goBackward(float inches, int percent){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -144,7 +156,7 @@ void goDown(float inches)
     {
         vex_motor.SetPercent(-25);
     }
-        vex_motor.Stop();
+    vex_motor.Stop();
 
 }
 
@@ -163,47 +175,63 @@ char checkLightColor(AnalogInputPin Cds_cell)
 /* Main function */
 int main(void)
 {
+    // FINAL CODE
 
-    // Final code for after the ramp
-    //RCS.InitializeTouchMenu("D30D1Hj1u");
+    // initialize RCS
+    // RCS.InitializeTouchMenu("D30D1Hj1u");
+
+    // while loop to sleep until cds cell is on
+    while(Cds_cell.Value() >= 1.0){
+        Sleep(0.05);
+    }
 
     //Lowest value for blue light: 1.6
     //Lowest value for red light: 
     
     // go to baggage
     goBackward(1.0,25);
-    goStraight(15.0,25);
-    turnRight(right45, 25, 25);
+    if(RCS.CurrentRegionLetter() == 'C')
+    {
+        goStraight(14.0, 25);
+    }
+    else
+    {
+        goStraight(13.0, 25);
+    }
+    turnRight(70, 25, 25);
 
     // run into baggage
-    goStraight(10.0, 25);
+    goStraightTime(1.5, 40);
 
-    /*
-    //Go to the Fuel Lever
-    goBackward(1.0,25);
-    goStraight(15.0,25);
+    // go back and reposition
+    goBackward(6.25, 25);
+    turnLeft(left90 - 20, 25, 25);
+    goBackward(17.0, 25);
 
-
-    turnLeft(left45,25,25);
-    goStraight(2.0,25);
+    // go to the fuel lever
+    goStraight(18.0, 25);
 
     //Lift the fuel lever up
     goDown(1.5);
-    goBackward(1.0,25);
-    goDown(1.0);
-    goStraight(1.0,25);
-    goUp(2.0);
-
-    //Drop off luggage
     goBackward(3.0,25);
-    goUp(0.5);
-    turnRight(right45,25,25);
-    goStraight(10.0,25);
+    goDown(1.0);
+    goStraight(3.0,25);
+    goUp(2.0);
+    goBackward(3.0, 25);
+    goUp(1.0);
 
     //Align against the wall before the ramp
-    goBackward(11.0,25);
-    turnLeft(left45,25,25);
-    goBackward(10.0,25);
+    goBackward(11.0, 25);
+    // MIGHT NOT WORK
+    turnRight(50, 25, 25);
+    goBackward(8.0,25);
+    // check these
+    turnPivotRight(right90*2, 25, 0);
+    goStraight(5.0, 25);
+    Sleep(0.5);
+
+    // up the ramp
+    goStraight(20.0, 35);
 
     //Go up the ramp
     /*turnPivotRight(right45*2,25,25);
