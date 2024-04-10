@@ -11,35 +11,33 @@
 #include <string.h>
 #include <stdio.h>
 #include <FEHLCD.h>
-
 // define circumference
 #define circ 10.995565
-
 // define light values
 #define red 0.328
-
 // 5 counts = 1 ft movement
 #define foot 5.0
-
 // speed
 #define straight_speed 35
 #define turn_speed 25
 
 // turns
-#define left90 195.0
-#define left45 95.0
-#define right90 150.0
-#define right45 80.0
+#define left90 200.0
+#define left45 92.5
+#define left45 95
+#define right90 200.0
+#define right45 100.0
 
 // right and left motors are flipped
 // declare motors & cds cell
+FEHMotor right_motor(FEHMotor :: Motor0, 9.0);
+FEHMotor left_motor(FEHMotor :: Motor2, 9.0);
 FEHMotor right_motor(FEHMotor :: Motor2, 9.0);
 FEHMotor left_motor(FEHMotor :: Motor0, 9.0);
 FEHMotor vex_motor(FEHMotor :: Motor3, 9.0);
 AnalogInputPin Cds_cell(FEHIO :: P1_0);
 DigitalEncoder right_encoder(FEHIO :: P0_0);
 DigitalEncoder left_encoder(FEHIO :: P3_0);
-
 //Encoder has 318 counts per revolution
 //wheel radius and pi can be constants
 void goStraight(float inches, int percent){
@@ -53,7 +51,6 @@ void goStraight(float inches, int percent){
     right_motor.Stop();
     left_motor.Stop();
 }
-
 void goBackward(float inches, int percent){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -65,7 +62,6 @@ void goBackward(float inches, int percent){
     right_motor.Stop();
     left_motor.Stop();
 }
-
 // turn right function
 void turnRight(float counts, int percent_right, int percent_left){
     right_encoder.ResetCounts();
@@ -77,7 +73,6 @@ void turnRight(float counts, int percent_right, int percent_left){
     right_motor.Stop();
     left_motor.Stop();
 }
-
 // turn left function
 void turnLeft(float counts, int percent_right, int percent_left){
     right_encoder.ResetCounts();
@@ -89,12 +84,10 @@ void turnLeft(float counts, int percent_right, int percent_left){
     right_motor.Stop();
     left_motor.Stop();
 }
-
 // display cds value function
 float DisplayCdSValue(AnalogInputPin Cds_cell){
     return Cds_cell.Value();
 }
-
 // checks if light is on
 // returns 0 if no light, otherwise 1
 int checkLight(AnalogInputPin Cds_cell){
@@ -107,7 +100,6 @@ int checkLight(AnalogInputPin Cds_cell){
         return 0;
     }
 }
-
 // rack and pinion go up function
 /*2 seconds = 1.5 inches*/
 void goUp(float time)
@@ -119,7 +111,6 @@ void goUp(float time)
     }
     vex_motor.Stop();
 }
-
 // rack and pinion go down function
 void goDown(float inches)
 {
@@ -132,42 +123,67 @@ void goDown(float inches)
         vex_motor.SetPercent(-25);
     }
         vex_motor.Stop();
-
 }
-
 /* Main function */
 int main(void)
 {
-    // CHECKPOINT 5
-    // initialize RCS
-    // RCS.InitializeTouchMenu("D30D1Hj1u");
 
+    
+    // CHECKPOINT 3
+    //initialize the RCS
+    // team key: D30D1Hj1u
     // while loop to sleep until cds cell is on
     while(Cds_cell.Value() >= 1.0){
         Sleep(0.05);
     }
+    // RCS.InitializeTouchMenu("D30D1Hj1u");
+    int lever_distance = 0;
+    // Check which lever to flip and perform some action
+    // int correctLever = RCS.GetCorrectLever();
+    int correctLever = 1;
+    int correctLever = 0;
+    if(correctLever == 0)
+    {
+        lever_distance = 3.0;
+    } 
+    else if(correctLever == 1)
+    {
+        lever_distance = 6.8;
+    }
+    else if(correctLever == 2)
+    {
+        lever_distance = 10.4;
+    }
 
-    // pre ramp adjust to position
-    goBackward(1.0, 25);
-    goStraight(3.0, 25);
-    turnRight(right45 + 50, 25, 25);
-    goStraight(4.0, 25);
-    turnLeft(55, 25, 25);
-    goStraight(9.0, 25);
-    Sleep(0.5);
+    // start hook at the top of rack
+    // go straight 11
+    goStraight(14.25, 25);
+    goStraight(14.850, 25);
 
-    // up the ramp
-    goStraight(21.5, 35);
+    // turn left
+    turnLeft(left45, 25, 25);
+    // go straight till fuel levers
+    goStraight(lever_distance, 25);
+    // move hook down
+    goDown(3.75);
+    // backwards
+    goBackward(lever_distance, 25);
+    Sleep(5.0);
 
-    // post-ramp
-    turnLeft(left90, 25, 25);
+    // move down a little
+    goDown(0.75);
+    goDown(0.9);
 
-    // drop the luggage
-    goStraight(23.25, 35);
+    // forwards again
+    goStraight(lever_distance, 25);
 
-    // go back down
-    goBackward(0.5, 25);
-    turnLeft(left90, 25, 25);
-    goStraight(10.0, 15);
+    // move hook back up
+    goUp(1.75);
+    goUp(1.3);
+
+    // go backwards and reset
+    goBackward(lever_distance, 25);
+    goUp(3.5);
+    goUp(4.075);
 
 }
