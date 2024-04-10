@@ -307,9 +307,9 @@ int main(void)
     goDown(1.6);
 
     // positioning to passport stamp
-    goStraight(10.6,25);
+    goStraight(10.71,25);
     turnLeft(left90 - 3, 25,25);
-    goBackward(11.0, 25);
+    goBackward(11.2, 25);
     Sleep(3.0);
 
     //completing the passport stamp
@@ -318,12 +318,12 @@ int main(void)
     goDown(1.45);
 
     // adjust position
-    goStraight(10.0, 25);
+    goStraight(20.0, 25);
     turnRight(right90 - 30, 25, 25);
     goBackward(10.0, 25);
     goBackTime(4.0, 25);
     goStraight(1.0, 25);
-    turnPivotLeft(left90*2 + 40, 0, 25);
+    turnLeft(left90,25,25);
 
     // go down the ramp & hit button
     goStraight(20.0, 15);
