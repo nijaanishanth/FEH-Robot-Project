@@ -183,9 +183,8 @@ int main(void)
 
     // go down the ramp
     turnLeft(left90 - 20, 25, 25);
-    //turnLeft(left90 - 20, 25, 25);
     goStraight(20.0, 15);
-    //go straight on bottom
-   // turnRight();
+    // go straight on bottom
+    // turnRight();
     goStraight(10.0, 25);
 }
