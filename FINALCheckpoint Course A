@@ -41,6 +41,8 @@ AnalogInputPin Cds_cell(FEHIO :: P1_0);
 DigitalEncoder right_encoder(FEHIO :: P0_0);
 DigitalEncoder left_encoder(FEHIO :: P3_0);
 
+void adjustGear();
+
 //Encoder has 318 counts per revolution
 //wheel radius and pi can be constants
 void goStraight(float inches, int percent){
@@ -127,6 +129,17 @@ void turnLeft(float counts, int percent_right, int percent_left){
     left_motor.Stop();
 }
 
+void turnPivotLeft(float counts, int percent_right, int percent_left){
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+    while(right_encoder.Counts() < counts){
+        right_motor.SetPercent(percent_right);
+        left_motor.SetPercent(percent_left);
+    }
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
 // display cds value function
 float DisplayCdSValue(AnalogInputPin Cds_cell){
     return Cds_cell.Value();
@@ -187,14 +200,16 @@ char checkLightColor(AnalogInputPin Cds_cell)
 /* Main function */
 int main(void)
 {
+    adjustGear();
+
     // FINAL CODE
     // initialize RCS
-    // RCS.InitializeTouchMenu("D30D1Hj1u");
+    RCS.InitializeTouchMenu("D30D1Hj1u");
 
     // print battery to screen
     LCD.Write(Battery.Voltage());
     // while loop to sleep until cds cell is on
-    while(Cds_cell.Value() >= 1.0){
+    while(Cds_cell.Value() >= 0.7){
         Sleep(0.05);
     }
 
@@ -202,7 +217,7 @@ int main(void)
     //Lowest value for red light: 
     
     // go to baggage
-    goBackTime(0.4,25);
+    goBackTime(0.4, 25);
     if(RCS.CurrentRegionLetter() == 'C')
     {
         goStraight(14.0, 25);
@@ -221,23 +236,24 @@ int main(void)
     }
 
     // run into baggage
-    goStraightTime(1.5, 40);
+    goStraightTime(1.5, 35);
 
     // go back and reposition
     goBackward(6.25, 25);
-    turnLeft(left90 - 25, 25, 25);
+    turnLeft(left90 - 28, 25, 25);
     goBackTime(4.0, 25);
 
     // go to the fuel lever
     goStraight(18.0, 25);
 
     //Lift the fuel lever up
-    goDown(1.30);
-    goUp(0.5);
+    goDown(1.35);
+    goUp(0.55);
     goBackward(3.0,25);
     goDown(1.7);
     goStraight(3.0,25);
     goUp(1.65);
+    goDown(0.5);
     goBackward(3.0, 25);
 
     //Align against the wall before the ramp
@@ -258,20 +274,20 @@ int main(void)
     
     //Go to the light
     goStraight(9.0,25);
-    turnRight(right45 + 3,25,25);
+    turnRight(right45,25,25);
     goStraight(20.0,25);
 
     //Read the light and right the color to the screen
     char color = checkLightColor(Cds_cell);
     LCD.WriteLine(color);
     Sleep(1.0);
-    goUp(1.45);
 
     //Press the correct ticket button
     float redAdd = 0;
     if(color == 'b')
     {
-        goBackward(7.0, 25);
+        // FOR COURSE D THIS IS 7.0
+        goBackward(8.0, 25);
     }
     else
     {
@@ -282,25 +298,197 @@ int main(void)
     goStraight(2.5 + redAdd,25);
     goStraightTime(1.0, 25);
 
-/*
     //Align against the wall
     goBackward(12.0,25);
     Sleep(0.5);
     turnLeft(left45 + 50,25,25);
-    goBackward(20.0,25);
+    goBackward(10.0,25);
+    goBackTime(2.5, 25);
+    goDown(1.6);
 
     // positioning to passport stamp
     goStraight(10.6,25);
-    turnLeft(left90,25,25);
-    goBackward(11.5,25);
+    turnLeft(left90 - 3, 25,25);
+    goBackward(11.0, 25);
+    Sleep(3.0);
 
     //completing the passport stamp
-    goUp(6.0);
+    goUp(5.75);
     goBackward(7.0, 25);
-    goDown(5.02);
-    
-    //After completing passport stamp, adjust to go back down the ramp
-    goStraight(10,25);
-    turnRight(10.0,25,25);*/
+    goDown(1.45);
 
+    // adjust position
+    goStraight(10.0, 25);
+    turnRight(right90 - 30, 25, 25);
+    goBackward(10.0, 25);
+    goBackTime(4.0, 25);
+    goStraight(1.0, 25);
+    turnPivotLeft(left90*2 + 40, 0, 25);
+
+    // go down the ramp & hit button
+    goStraight(20.0, 15);
+
+    // hit the button
+    turnRight(right45, 25, 25);
+    goStraight(10.0, 25);
+
+}
+
+void adjustGear(){
+    float x_pos, y_pos;
+    float x_trash, y_trash;
+    bool cancel = false;
+    LCD.Clear();
+    LCD.SetFontColor(WHITE);
+    LCD.DrawHorizontalLine(119,0,319);
+    LCD.WriteAt("Cancel",140,60);
+    LCD.WriteAt("Continue",140,180);
+    LCD.ClearBuffer();
+    while(!LCD.Touch(&x_pos,&y_pos)){};
+    while(LCD.Touch(&x_trash,&y_trash)){};
+    if(y_pos < 119){
+        cancel = true;
+    }
+    while(!cancel){
+        LCD.Clear();
+        LCD.ClearBuffer();
+        LCD.SetFontColor(WHITE);
+        LCD.DrawHorizontalLine(119,0,319);
+        LCD.WriteAt("Small Value",140,60);
+        LCD.WriteAt("Large Value",140,180);
+        LCD.ClearBuffer();
+        while(!LCD.Touch(&x_pos,&y_pos)){};
+        while(LCD.Touch(&x_trash,&y_trash)){};
+
+        if(y_pos < 119){
+            LCD.Clear();
+            LCD.SetFontColor(WHITE);
+            LCD.DrawHorizontalLine(47,0,319);
+            LCD.DrawHorizontalLine(94,0,319);
+            LCD.DrawHorizontalLine(141,0,319);
+            LCD.DrawHorizontalLine(188,0,319);
+            LCD.WriteAt("0.1",140,25);
+            LCD.WriteAt("0.2",140,60);
+            LCD.WriteAt("0.3",140,120);
+            LCD.WriteAt("0.4",140,160);
+            LCD.WriteAt("0.5",140,210);
+            LCD.ClearBuffer();
+            while(!LCD.Touch(&x_pos,&y_pos)){};
+            while(LCD.Touch(&x_trash,&y_trash)){};
+
+            float x_p, y_p;
+            float x_t, y_t;
+            LCD.Clear();
+            LCD.SetFontColor(WHITE);
+            LCD.DrawHorizontalLine(119,0,319);
+            LCD.WriteAt("Up",140,60);
+            LCD.WriteAt("Down",140,180);
+            LCD.ClearBuffer();
+            while(!LCD.Touch(&x_p,&y_p)){};
+            while(LCD.Touch(&x_t,&y_t)){};
+            if(y_pos < 47){
+                if(y_p < 119){
+                    goUp(0.1);
+                }else{
+                    goDown(0.1);
+                }
+            }else if(y_pos < 94){
+                if(y_p < 119){
+                    goUp(0.2);
+                }else{
+                    goDown(0.2);
+                }
+            }else if(y_pos < 141){
+                if(y_p < 119){
+                    goUp(0.3);
+                }else{
+                    goDown(0.3);
+                }
+            }else if(y_pos < 188){
+                if(y_p < 119){
+                    goUp(0.4);
+                }else{
+                    goDown(0.4);
+                }
+            } else{
+                if(y_p < 119){
+                    goUp(0.5);
+                }else{
+                    goDown(0.5);
+                }
+            }
+
+        }else if(y_pos > 119){
+            LCD.Clear();
+            LCD.SetFontColor(WHITE);
+            LCD.DrawHorizontalLine(47,0,319);
+            LCD.DrawHorizontalLine(94,0,319);
+            LCD.DrawHorizontalLine(141,0,319);
+            LCD.DrawHorizontalLine(188,0,319);
+            LCD.WriteAt("1.0",140,25);
+            LCD.WriteAt("2.0",140,60);
+            LCD.WriteAt("3.0",140,120);
+            LCD.WriteAt("4.0",140,160);
+            LCD.WriteAt("5.0",140,210);
+            LCD.ClearBuffer();
+            while(!LCD.Touch(&x_pos,&y_pos)){};
+            while(LCD.Touch(&x_trash,&y_trash)){};
+
+            float x_p2, y_p2;
+            float x_t2, y_t2;
+            LCD.Clear();
+            LCD.SetFontColor(WHITE);
+            LCD.DrawHorizontalLine(119,0,319);
+            LCD.WriteAt("Up",140,60);
+            LCD.WriteAt("Down",140,180);
+            LCD.ClearBuffer();
+            while(!LCD.Touch(&x_p2,&y_p2)){};
+            while(LCD.Touch(&x_t2,&y_t2)){};
+            if(y_pos < 47){
+                if(y_p2 < 119){
+                    goUp(1.0);
+                }else{
+                    goDown(1.0);
+                }
+            }else if(y_pos < 94){
+                if(y_p2 < 119){
+                    goUp(2.0);
+                }else{
+                    goDown(2.0);
+                }
+            }else if(y_pos < 141){
+                if(y_p2 < 119){
+                    goUp(3.0);
+                }else{
+                    goDown(3.0);
+                }
+            }else if(y_pos < 188){
+                if(y_p2 < 119){
+                    goUp(4.0);
+                }else{
+                    goDown(4.0);
+                }
+            } else{
+                if(y_p2 < 119){
+                    goUp(5.0);
+                }else{
+                    goDown(5.0);
+                }
+            }
+
+        }
+
+        LCD.Clear();
+        LCD.SetFontColor(WHITE);
+        LCD.DrawHorizontalLine(119,0,319);
+        LCD.WriteAt("Cancel",140,60);
+        LCD.WriteAt("Continue",140,180);
+         LCD.ClearBuffer();
+        while(!LCD.Touch(&x_pos,&y_pos)){};
+        while(LCD.Touch(&x_trash,&y_trash)){};
+        if(y_pos < 119){
+            cancel = true;
+        }
+    }
+    
 }
