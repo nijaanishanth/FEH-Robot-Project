@@ -1,0 +1,191 @@
+/* Include preprocessor directives */
+/* Include preprocessor directives */
+#include <FEHIO.h>
+#include <FEHUtility.h>
+#include <FEHMotor.h>
+#include <FEHServo.h>
+#include <FEHAccel.h>
+#include <FEHBattery.h>
+#include <FEHBuzzer.h>
+#include <FEHRCS.h>
+#include <FEHSD.h>
+#include <string.h>
+#include <stdio.h>
+#include <FEHLCD.h>
+
+//Encoder has 318 counts per revolution
+//wheel radius and pi can be constants
+FEHMotor right_motor(FEHMotor :: Motor2, 9.0);
+FEHMotor left_motor(FEHMotor :: Motor0, 9.0);
+FEHMotor vex_motor(FEHMotor :: Motor3, 9.0);
+AnalogInputPin Cds_cell(FEHIO :: P1_0);
+DigitalEncoder right_encoder(FEHIO :: P0_0);
+DigitalEncoder left_encoder(FEHIO :: P3_0);
+
+
+
+// rack and pinion go up function
+/*2 seconds = 1.5 inches*/
+void goUp(float time)
+{
+    float start_time = TimeNow();
+    while(TimeNow() - start_time < time)
+    {
+        vex_motor.SetPercent(25);
+    }
+    vex_motor.Stop();
+}
+
+// rack and pinion go down function
+void goDown(float inches)
+{
+    // 1 SECOND = 0.95 INCHES
+    // MAX INCHES IS 7.5
+    float time = inches/0.95;
+    float start_time = TimeNow();
+    while(TimeNow() - start_time < time)
+    {
+        vex_motor.SetPercent(-25);
+    }
+    vex_motor.Stop();
+
+}
+
+
+
+/* Main function */
+int main(void)
+{
+    float x_pos, y_pos;
+    float x_trash, y_trash;
+    while(true){
+        LCD.Clear();
+        LCD.SetFontColor(WHITE);
+        LCD.DrawHorizontalLine(119,0,319);
+        LCD.WriteAt("Small Value",140,60);
+        LCD.WriteAt("Large Value",140,180);
+        LCD.ClearBuffer();
+        while(!LCD.Touch(&x_pos,&y_pos)){};
+        while(LCD.Touch(&x_trash,&y_trash)){};
+
+        if(y_pos < 119){
+            LCD.Clear();
+            LCD.SetFontColor(WHITE);
+            LCD.DrawHorizontalLine(47,0,319);
+            LCD.DrawHorizontalLine(94,0,319);
+            LCD.DrawHorizontalLine(141,0,319);
+            LCD.DrawHorizontalLine(188,0,319);
+            LCD.WriteAt("0.1",140,25);
+            LCD.WriteAt("0.2",140,60);
+            LCD.WriteAt("0.3",140,120);
+            LCD.WriteAt("0.4",140,160);
+            LCD.WriteAt("0.5",140,210);
+            LCD.ClearBuffer();
+            while(!LCD.Touch(&x_pos,&y_pos)){};
+            while(LCD.Touch(&x_trash,&y_trash)){};
+
+            float x_p, y_p;
+            float x_t, y_t;
+            LCD.Clear();
+            LCD.SetFontColor(WHITE);
+            LCD.DrawHorizontalLine(119,0,319);
+            LCD.WriteAt("Up",140,60);
+            LCD.WriteAt("Down",140,180);
+            LCD.ClearBuffer();
+            while(!LCD.Touch(&x_p,&y_p)){};
+            while(LCD.Touch(&x_t,&y_t)){};
+            if(y_pos < 47){
+                if(y_p < 119){
+                    goUp(0.1);
+                }else{
+                    goDown(0.1);
+                }
+            }else if(y_pos < 94){
+                if(y_p < 119){
+                    goUp(0.2);
+                }else{
+                    goDown(0.2);
+                }
+            }else if(y_pos < 141){
+                if(y_p < 119){
+                    goUp(0.3);
+                }else{
+                    goDown(0.3);
+                }
+            }else if(y_pos < 188){
+                if(y_p < 119){
+                    goUp(0.4);
+                }else{
+                    goDown(0.4);
+                }
+            } else{
+                if(y_p < 119){
+                    goUp(0.5);
+                }else{
+                    goDown(0.5);
+                }
+            }
+
+        }else if(y_pos > 119){
+            LCD.Clear();
+            LCD.SetFontColor(WHITE);
+            LCD.DrawHorizontalLine(47,0,319);
+            LCD.DrawHorizontalLine(94,0,319);
+            LCD.DrawHorizontalLine(141,0,319);
+            LCD.DrawHorizontalLine(188,0,319);
+            LCD.WriteAt("1.0",140,25);
+            LCD.WriteAt("2.0",140,60);
+            LCD.WriteAt("3.0",140,120);
+            LCD.WriteAt("4.0",140,160);
+            LCD.WriteAt("5.0",140,210);
+            LCD.ClearBuffer();
+            while(!LCD.Touch(&x_pos,&y_pos)){};
+            while(LCD.Touch(&x_trash,&y_trash)){};
+
+            float x_p2, y_p2;
+            float x_t2, y_t2;
+            LCD.Clear();
+            LCD.SetFontColor(WHITE);
+            LCD.DrawHorizontalLine(119,0,319);
+            LCD.WriteAt("Up",140,60);
+            LCD.WriteAt("Down",140,180);
+            LCD.ClearBuffer();
+            while(!LCD.Touch(&x_p2,&y_p2)){};
+            while(LCD.Touch(&x_t2,&y_t2)){};
+            if(y_pos < 47){
+                if(y_p2 < 119){
+                    goUp(1.0);
+                }else{
+                    goDown(1.0);
+                }
+            }else if(y_pos < 94){
+                if(y_p2 < 119){
+                    goUp(2.0);
+                }else{
+                    goDown(2.0);
+                }
+            }else if(y_pos < 141){
+                if(y_p2 < 119){
+                    goUp(3.0);
+                }else{
+                    goDown(3.0);
+                }
+            }else if(y_pos < 188){
+                if(y_p2 < 119){
+                    goUp(4.0);
+                }else{
+                    goDown(4.0);
+                }
+            } else{
+                if(y_p2 < 119){
+                    goUp(5.0);
+                }else{
+                    goDown(5.0);
+                }
+            }
+
+        }
+    }
+    
+    
+}
