@@ -41,10 +41,16 @@ AnalogInputPin Cds_cell(FEHIO :: P1_0);
 DigitalEncoder right_encoder(FEHIO :: P0_0);
 DigitalEncoder left_encoder(FEHIO :: P3_0);
 
-void adjustGear();
-
 //Encoder has 318 counts per revolution
 //wheel radius and pi can be constants
+
+/*
+    goStraight Function Summary: The goStraight function takes in
+    two paratmeters: inces to travel and percent speed. The function calculate the 
+    number of revoluations the needed to travel that distance. Then the 
+    right and left motors are set at a certain speed until the right 
+    encoder has reached the specified number of counts. 
+*/
 void goStraight(float inches, int percent){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -57,6 +63,13 @@ void goStraight(float inches, int percent){
     left_motor.Stop();
 }
 
+/*
+    goStraightTime Function Summary: The goStraightTime function takes in
+    two parameters: time and motor percent. The function stores the 
+    time in a variables start_time and continues to drive the robot
+    until the current time mnus the start time is less than the time
+    specified in the parameter.
+*/
 void goStraightTime(float time, int percent)
 {
     float start_time = TimeNow();
@@ -69,6 +82,13 @@ void goStraightTime(float time, int percent)
     left_motor.Stop();
 }
 
+/*
+    goBackTime Function Summary: The goBackTime function takes in
+    two parameters: time and motor percent. The function stores the 
+    time in a variables start_time and continues to drive the robot
+    backward until the current time mnus the start time is less than the time
+    specified in the parameter.
+*/
 void goBackTime(float time, int percent)
 {
     float start_time = TimeNow();
@@ -81,6 +101,13 @@ void goBackTime(float time, int percent)
     left_motor.Stop();
 }
 
+/*
+    goBackward Function Summary: The goBackward function takes in
+    two paratmeters: inces to travel and percent speed. The function calculate the
+    number of revoluations the needed to travel that distance. Then the 
+    right and left motors are set at a certain speed until the right 
+    encoder has reached the specified number of counts. 
+*/
 void goBackward(float inches, int percent){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -93,7 +120,13 @@ void goBackward(float inches, int percent){
     left_motor.Stop();
 }
 
-// turn right function
+/*
+    turnRight Function Summary: The tunRight function takes in 
+    three parameters: the number of counts, and percent speed of 
+    right and left motors. The function sets the motors and the 
+    speciied percents until the number of counts in the 
+    right encoder has reached the number in parameter. 
+*/
 void turnRight(float counts, int percent_right, int percent_left){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -105,7 +138,14 @@ void turnRight(float counts, int percent_right, int percent_left){
     left_motor.Stop();
 }
 
-// turn right when right wheel = 0
+/*
+    turnPivotRight Function Summary: The tunPivoRight function takes in 
+    three parameters: the number of counts, and percent speed of 
+    right and left motors. The function sets the motors and the 
+    speciied percents until the number of counts in the 
+    right encoder has reached the number in parameter. One of the motors
+    is not moving, which is why the robot pivots
+*/
 void turnPivotRight(float counts, int percent_right, int percent_left){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -117,7 +157,14 @@ void turnPivotRight(float counts, int percent_right, int percent_left){
     left_motor.Stop();
 }
 
-// turn left function
+/*
+    turnLeft Function Summary: The turnLeft function takes in 
+    three parameters: the number of counts, and percent speed of 
+    right and left motors. The function sets the motors and the 
+    specified percent, but at a negative value, 
+    until the number of counts in the 
+    right encoder has reached the number in parameter. 
+*/
 void turnLeft(float counts, int percent_right, int percent_left){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -129,6 +176,15 @@ void turnLeft(float counts, int percent_right, int percent_left){
     left_motor.Stop();
 }
 
+/*
+    turnPivotLeft Function Summary: The turnPivotLeft function takes in 
+    three parameters: the number of counts, and percent speed of 
+    right and left motors. The function sets the motors and the 
+    speciied percents until the number of counts in the 
+    right encoder has reached the number in parameter. One of the motors
+    is not moving, which is why the robot pivots in the 
+    leftward direction
+*/
 void turnPivotLeft(float counts, int percent_right, int percent_left){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -140,26 +196,22 @@ void turnPivotLeft(float counts, int percent_right, int percent_left){
     left_motor.Stop();
 }
 
-// display cds value function
+/*
+    DisplayCdSValue function summary: takes in an AnalogInputPin
+    and displays the value read by the CdS cell
+*/
 float DisplayCdSValue(AnalogInputPin Cds_cell){
     return Cds_cell.Value();
 }
 
-// checks if light is on
-// returns 0 if no light, otherwise 1
-int checkLight(AnalogInputPin Cds_cell){
-    if(Cds_cell.Value() > red)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
-}
 
-// rack and pinion go up function
-/*2 seconds = 1.5 inches*/
+
+/*
+    goUp Function Summary: takes in one paramter, time
+    stores the intial time as start_time and sets
+    the vex motors at a positive speed until the current time
+    minus the start_time is less than time
+*/
 void goUp(float time)
 {
     float start_time = TimeNow();
@@ -170,7 +222,12 @@ void goUp(float time)
     vex_motor.Stop();
 }
 
-// rack and pinion go down function
+/*
+    goDown Function Summary: takes in one paramter, time
+    stores the intial time as start_time and sets
+    the vex motors at a negative speed until the current time
+    minus the start_time is less than time
+*/
 void goDown(float inches)
 {
     // 1 SECOND = 0.95 INCHES
@@ -185,9 +242,14 @@ void goDown(float inches)
 
 }
 
+/*
+    checkLightColor function summary: tkes in an AnalogInputPin
+    and if the value of teh CdS_cell is greater than 1.6,
+    returns character 'b' else it retursn 'r'
+*/
 char checkLightColor(AnalogInputPin Cds_cell)
 {
-    if(Cds_cell.Value() >= 1.6)
+    if(Cds_cell.Value() >= 1.2)
     {
         return 'b';
     }
@@ -197,6 +259,8 @@ char checkLightColor(AnalogInputPin Cds_cell)
     }
 }
 
+void adjustGear();
+
 /* Main function */
 int main(void)
 {
@@ -204,7 +268,7 @@ int main(void)
 
     // FINAL CODE
     // initialize RCS
-    RCS.InitializeTouchMenu("D30D1Hj1u");
+    // RCS.InitializeTouchMenu("D30D1Hj1u");
 
     // print battery to screen
     LCD.Write(Battery.Voltage());
@@ -221,26 +285,20 @@ int main(void)
     if(RCS.CurrentRegionLetter() == 'C')
     {
         goStraight(14.0, 25);
-    }
-    else
-    {
-        goStraight(13.0, 25);
-    }
-    if(RCS.CurrentRegionLetter() == 'C')
-    {
         turnRight(60, 25, 25);
     }
     else
     {
+        goStraight(13.0, 25);
         turnRight(70, 25, 25);
     }
 
     // run into baggage
-    goStraightTime(1.5, 35);
+    goStraightTime(1.5, 40);
 
     // go back and reposition
     goBackward(6.25, 25);
-    turnLeft(left90 - 28, 25, 25);
+    turnLeft(left90 - 33, 25, 25);
     goBackTime(4.0, 25);
 
     // go to the fuel lever
@@ -307,8 +365,8 @@ int main(void)
     goDown(1.6);
 
     // positioning to passport stamp
-    goStraight(10.71,25);
-    turnLeft(left90 - 3, 25,25);
+    goStraight(10.72,25);
+    turnLeft(left90, 25,25);
     goBackward(11.2, 25);
     Sleep(3.0);
 
@@ -334,6 +392,10 @@ int main(void)
 
 }
 
+/*
+    adjustGear Function Summary: allows the gear
+    to be adjusted either up or down by either a small or large value
+*/
 void adjustGear(){
     float x_pos, y_pos;
     float x_trash, y_trash;
