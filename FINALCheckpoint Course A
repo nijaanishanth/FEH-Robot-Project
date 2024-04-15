@@ -373,7 +373,7 @@ int main(void)
     turnPivotLeft(left90*2 - 40, 0, 25);
 
     // go down the ramp
-    goStraight(33.0, 15);
+    goStraight(30.0, 15);
 
     // hit the button
     turnLeft(left45, 25, 25);
