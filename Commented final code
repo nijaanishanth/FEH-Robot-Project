@@ -1,0 +1,562 @@
+/* Include preprocessor directives */
+/* Include preprocessor directives */
+#include <FEHIO.h>
+#include <FEHUtility.h>
+#include <FEHMotor.h>
+#include <FEHServo.h>
+#include <FEHAccel.h>
+#include <FEHBattery.h>
+#include <FEHBuzzer.h>
+#include <FEHRCS.h>
+#include <FEHSD.h>
+#include <string.h>
+#include <stdio.h>
+#include <FEHLCD.h>
+
+// define circumference
+#define circ 10.995565
+
+// define light values
+#define red 0.328
+
+// 5 counts = 1 ft movement
+#define foot 5.0
+
+// speed
+#define straight_speed 35
+#define turn_speed 25
+
+// turns
+#define left90 195.0
+#define left45 95.0
+#define right90 150.0
+#define right45 80.0
+
+// right and left motors are flipped
+// declare motors & cds cell
+FEHMotor right_motor(FEHMotor :: Motor2, 9.0);
+FEHMotor left_motor(FEHMotor :: Motor0, 9.0);
+FEHMotor vex_motor(FEHMotor :: Motor3, 9.0);
+AnalogInputPin Cds_cell(FEHIO :: P1_0);
+DigitalEncoder right_encoder(FEHIO :: P0_0);
+DigitalEncoder left_encoder(FEHIO :: P3_0);
+
+//Encoder has 318 counts per revolution
+//wheel radius and pi can be constants
+
+/*
+    goStraight Function Summary: The goStraight function takes in
+    two paratmeters: inces to travel and percent speed. The function calculate the 
+    number of revoluations the needed to travel that distance. Then the 
+    right and left motors are set at a certain speed until the right 
+    encoder has reached the specified number of counts. 
+*/
+void goStraight(float inches, int percent){
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+    float num_revolutions = inches/(circ);
+    while(right_encoder.Counts() < 318 * num_revolutions){
+        right_motor.SetPercent(percent);
+        left_motor.SetPercent(-percent);
+    }
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+/*
+    goStraightTime Function Summary: The goStraightTime function takes in
+    two parameters: time and motor percent. The function stores the 
+    time in a variables start_time and continues to drive the robot
+    until the current time mnus the start time is less than the time
+    specified in the parameter.
+*/
+void goStraightTime(float time, int percent)
+{
+    float start_time = TimeNow();
+    while(TimeNow() - start_time < time)
+    {
+        right_motor.SetPercent(percent);
+        left_motor.SetPercent(-percent);
+    }
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+/*
+    goBackTime Function Summary: The goBackTime function takes in
+    two parameters: time and motor percent. The function stores the 
+    time in a variables start_time and continues to drive the robot
+    backward until the current time mnus the start time is less than the time
+    specified in the parameter.
+*/
+void goBackTime(float time, int percent)
+{
+    float start_time = TimeNow();
+    while(TimeNow() - start_time < time)
+    {
+        right_motor.SetPercent(-percent);
+        left_motor.SetPercent(percent);
+    }
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+/*
+    goBackward Function Summary: The goBackward function takes in
+    two paratmeters: inces to travel and percent speed. The function calculate the
+    number of revoluations the needed to travel that distance. Then the 
+    right and left motors are set at a certain speed until the right 
+    encoder has reached the specified number of counts. 
+*/
+void goBackward(float inches, int percent){
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+    float num_revolutions = inches/(circ);
+    while(right_encoder.Counts() < 318 * num_revolutions){
+        right_motor.SetPercent(-percent);
+        left_motor.SetPercent(percent);
+    }
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+/*
+    turnRight Function Summary: The tunRight function takes in 
+    three parameters: the number of counts, and percent speed of 
+    right and left motors. The function sets the motors and the 
+    speciied percents until the number of counts in the 
+    right encoder has reached the number in parameter. 
+*/
+void turnRight(float counts, int percent_right, int percent_left){
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+    while(right_encoder.Counts() < counts){
+        right_motor.SetPercent(percent_right);
+        left_motor.SetPercent(percent_left);
+    }
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+/*
+    turnPivotRight Function Summary: The tunPivoRight function takes in 
+    three parameters: the number of counts, and percent speed of 
+    right and left motors. The function sets the motors and the 
+    speciied percents until the number of counts in the 
+    right encoder has reached the number in parameter. One of the motors
+    is not moving, which is why the robot pivots
+*/
+void turnPivotRight(float counts, int percent_right, int percent_left){
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+    while(left_encoder.Counts() < counts){
+        right_motor.SetPercent(percent_right);
+        left_motor.SetPercent(percent_left);
+    }
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+/*
+    turnLeft Function Summary: The turnLeft function takes in 
+    three parameters: the number of counts, and percent speed of 
+    right and left motors. The function sets the motors and the 
+    specified percent, but at a negative value, 
+    until the number of counts in the 
+    right encoder has reached the number in parameter. 
+*/
+void turnLeft(float counts, int percent_right, int percent_left){
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+    while(right_encoder.Counts() < counts){
+        right_motor.SetPercent(-percent_right);
+        left_motor.SetPercent(-percent_left);
+    }
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+/*
+    turnPivotLeft Function Summary: The turnPivotLeft function takes in 
+    three parameters: the number of counts, and percent speed of 
+    right and left motors. The function sets the motors and the 
+    speciied percents until the number of counts in the 
+    right encoder has reached the number in parameter. One of the motors
+    is not moving, which is why the robot pivots in the 
+    leftward direction
+*/
+void turnPivotLeft(float counts, int percent_right, int percent_left){
+    right_encoder.ResetCounts();
+    left_encoder.ResetCounts();
+    while(right_encoder.Counts() < counts){
+        right_motor.SetPercent(percent_right);
+        left_motor.SetPercent(percent_left);
+    }
+    right_motor.Stop();
+    left_motor.Stop();
+}
+
+/*
+    DisplayCdSValue function summary: takes in an AnalogInputPin
+    and displays the value read by the CdS cell
+*/
+float DisplayCdSValue(AnalogInputPin Cds_cell){
+    return Cds_cell.Value();
+}
+
+
+
+/*
+    goUp Function Summary: takes in one paramter, time
+    stores the intial time as start_time and sets
+    the vex motors at a positive speed until the current time
+    minus the start_time is less than time
+*/
+void goUp(float time)
+{
+    float start_time = TimeNow();
+    while(TimeNow() - start_time < time)
+    {
+        vex_motor.SetPercent(25);
+    }
+    vex_motor.Stop();
+}
+
+/*
+    goDown Function Summary: takes in one paramter, time
+    stores the intial time as start_time and sets
+    the vex motors at a negative speed until the current time
+    minus the start_time is less than time
+*/
+void goDown(float inches)
+{
+    // 1 SECOND = 0.95 INCHES
+    // MAX INCHES IS 7.5
+    float time = inches/0.95;
+    float start_time = TimeNow();
+    while(TimeNow() - start_time < time)
+    {
+        vex_motor.SetPercent(-25);
+    }
+    vex_motor.Stop();
+
+}
+
+/*
+    checkLightColor function summary: tkes in an AnalogInputPin
+    and if the value of teh CdS_cell is greater than 1.6,
+    returns character 'b' else it retursn 'r'
+*/
+char checkLightColor(AnalogInputPin Cds_cell)
+{
+    if(Cds_cell.Value() >= 1.6)
+    {
+        return 'b';
+    }
+    else
+    {
+        return 'r';
+    }
+}
+
+/*
+    adjustGear Function Summary: allows the gear
+    to be adjusted either up or down by either a small or large value
+*/
+void adjustGear(){
+    float x_pos, y_pos;
+    float x_trash, y_trash;
+    bool cancel = false;
+    LCD.Clear();
+    LCD.SetFontColor(WHITE);
+    LCD.DrawHorizontalLine(119,0,319);
+    LCD.WriteAt("Cancel",140,60);
+    LCD.WriteAt("Continue",140,180);
+    LCD.ClearBuffer();
+    while(!LCD.Touch(&x_pos,&y_pos)){};
+    while(LCD.Touch(&x_trash,&y_trash)){};
+    if(y_pos < 119){
+        cancel = true;
+    }
+    while(!cancel){
+        LCD.Clear();
+        LCD.ClearBuffer();
+        LCD.SetFontColor(WHITE);
+        LCD.DrawHorizontalLine(119,0,319);
+        LCD.WriteAt("Small Value",140,60);
+        LCD.WriteAt("Large Value",140,180);
+        LCD.ClearBuffer();
+        while(!LCD.Touch(&x_pos,&y_pos)){};
+        while(LCD.Touch(&x_trash,&y_trash)){};
+
+        if(y_pos < 119){
+            LCD.Clear();
+            LCD.SetFontColor(WHITE);
+            LCD.DrawHorizontalLine(47,0,319);
+            LCD.DrawHorizontalLine(94,0,319);
+            LCD.DrawHorizontalLine(141,0,319);
+            LCD.DrawHorizontalLine(188,0,319);
+            LCD.WriteAt("0.1",140,25);
+            LCD.WriteAt("0.2",140,60);
+            LCD.WriteAt("0.3",140,120);
+            LCD.WriteAt("0.4",140,160);
+            LCD.WriteAt("0.5",140,210);
+            LCD.ClearBuffer();
+            while(!LCD.Touch(&x_pos,&y_pos)){};
+            while(LCD.Touch(&x_trash,&y_trash)){};
+
+            float x_p, y_p;
+            float x_t, y_t;
+            LCD.Clear();
+            LCD.SetFontColor(WHITE);
+            LCD.DrawHorizontalLine(119,0,319);
+            LCD.WriteAt("Up",140,60);
+            LCD.WriteAt("Down",140,180);
+            LCD.ClearBuffer();
+            while(!LCD.Touch(&x_p,&y_p)){};
+            while(LCD.Touch(&x_t,&y_t)){};
+            if(y_pos < 47){
+                if(y_p < 119){
+                    goUp(0.1);
+                }else{
+                    goDown(0.1);
+                }
+            }else if(y_pos < 94){
+                if(y_p < 119){
+                    goUp(0.2);
+                }else{
+                    goDown(0.2);
+                }
+            }else if(y_pos < 141){
+                if(y_p < 119){
+                    goUp(0.3);
+                }else{
+                    goDown(0.3);
+                }
+            }else if(y_pos < 188){
+                if(y_p < 119){
+                    goUp(0.4);
+                }else{
+                    goDown(0.4);
+                }
+            } else{
+                if(y_p < 119){
+                    goUp(0.5);
+                }else{
+                    goDown(0.5);
+                }
+            }
+
+        }else if(y_pos > 119){
+            LCD.Clear();
+            LCD.SetFontColor(WHITE);
+            LCD.DrawHorizontalLine(47,0,319);
+            LCD.DrawHorizontalLine(94,0,319);
+            LCD.DrawHorizontalLine(141,0,319);
+            LCD.DrawHorizontalLine(188,0,319);
+            LCD.WriteAt("1.0",140,25);
+            LCD.WriteAt("2.0",140,60);
+            LCD.WriteAt("3.0",140,120);
+            LCD.WriteAt("4.0",140,160);
+            LCD.WriteAt("5.0",140,210);
+            LCD.ClearBuffer();
+            while(!LCD.Touch(&x_pos,&y_pos)){};
+            while(LCD.Touch(&x_trash,&y_trash)){};
+
+            float x_p2, y_p2;
+            float x_t2, y_t2;
+            LCD.Clear();
+            LCD.SetFontColor(WHITE);
+            LCD.DrawHorizontalLine(119,0,319);
+            LCD.WriteAt("Up",140,60);
+            LCD.WriteAt("Down",140,180);
+            LCD.ClearBuffer();
+            while(!LCD.Touch(&x_p2,&y_p2)){};
+            while(LCD.Touch(&x_t2,&y_t2)){};
+            if(y_pos < 47){
+                if(y_p2 < 119){
+                    goUp(1.0);
+                }else{
+                    goDown(1.0);
+                }
+            }else if(y_pos < 94){
+                if(y_p2 < 119){
+                    goUp(2.0);
+                }else{
+                    goDown(2.0);
+                }
+            }else if(y_pos < 141){
+                if(y_p2 < 119){
+                    goUp(3.0);
+                }else{
+                    goDown(3.0);
+                }
+            }else if(y_pos < 188){
+                if(y_p2 < 119){
+                    goUp(4.0);
+                }else{
+                    goDown(4.0);
+                }
+            } else{
+                if(y_p2 < 119){
+                    goUp(5.0);
+                }else{
+                    goDown(5.0);
+                }
+            }
+
+        }
+
+        LCD.Clear();
+        LCD.SetFontColor(WHITE);
+        LCD.DrawHorizontalLine(119,0,319);
+        LCD.WriteAt("Cancel",140,60);
+        LCD.WriteAt("Continue",140,180);
+         LCD.ClearBuffer();
+        while(!LCD.Touch(&x_pos,&y_pos)){};
+        while(LCD.Touch(&x_trash,&y_trash)){};
+        if(y_pos < 119){
+            cancel = true;
+        }
+    }
+    
+}
+
+/* Main function */
+int main(void)
+{
+    adjustGear();
+
+    // FINAL CODE
+    // initialize RCS
+    RCS.InitializeTouchMenu("D30D1Hj1u");
+
+    // print battery to screen
+    LCD.Write(Battery.Voltage());
+    // while loop to sleep until cds cell is on
+    while(Cds_cell.Value() >= 0.7){
+        Sleep(0.05);
+    }
+
+    //Lowest value for blue light: 1.6
+    //Lowest value for red light: 
+    
+    // go to baggage
+    goBackTime(0.4, 25);
+    if(RCS.CurrentRegionLetter() == 'C')
+    {
+        goStraight(14.0, 25);
+    }
+    else
+    {
+        goStraight(13.0, 25);
+    }
+    if(RCS.CurrentRegionLetter() == 'C')
+    {
+        turnRight(60, 25, 25);
+    }
+    else
+    {
+        turnRight(70, 25, 25);
+    }
+
+    // run into baggage
+    goStraightTime(1.5, 35);
+
+    // go back and reposition
+    goBackward(6.25, 25);
+    turnLeft(left90 - 28, 25, 25);
+    goBackTime(4.0, 25);
+
+    // go to the fuel lever
+    goStraight(18.0, 25);
+
+    //Lift the fuel lever up
+    goDown(1.35);
+    goUp(0.55);
+    goBackward(3.0,25);
+    goDown(1.7);
+    goStraight(3.0,25);
+    goUp(1.65);
+    goDown(0.5);
+    goBackward(3.0, 25);
+
+    //Align against the wall before the ramp
+    goBackward(5.0, 25);
+    turnRight(50, 25, 25);
+    goBackward(6.0, 25);
+    goBackTime(2.0, 25);
+    turnPivotRight(right90*2 + 40, 25, 0);
+    goStraight(5.0, 25);
+    Sleep(0.5);
+
+    // up the ramp
+    goStraight(20.0, 35);
+
+    //Align against the wall after the ramp
+    turnLeft(left90, 25, 25);
+    goBackTime(3.0, 25);
+    
+    //Go to the light
+    goStraight(9.0,25);
+    turnRight(right45,25,25);
+    goStraight(20.0,25);
+
+    //Read the light and right the color to the screen
+    char color = checkLightColor(Cds_cell);
+    LCD.WriteLine(color);
+    Sleep(1.0);
+
+    //Press the correct ticket button
+    float redAdd = 0;
+    if(color == 'b')
+    {
+        // FOR COURSE D THIS IS 7.0
+        goBackward(8.0, 25);
+    }
+    else
+    {
+        goBackward(15.0, 25);
+        redAdd = 3.0;
+    }
+    turnRight(right45 + 3,25,25);
+    goStraight(2.5 + redAdd,25);
+    goStraightTime(1.0, 25);
+
+    //Align against the wall
+    goBackward(12.0,25);
+    Sleep(0.5);
+    turnLeft(left45 + 50,25,25);
+    goBackward(10.0,25);
+    goBackTime(2.5, 25);
+    goDown(1.6);
+
+    // positioning to passport stamp
+    goStraight(10.71,25);
+    turnLeft(left90 - 3, 25,25);
+    goBackward(11.2, 25);
+    Sleep(3.0);
+
+    //completing the passport stamp
+    goUp(5.75);
+    goBackward(7.0, 25);
+    goDown(1.45);
+
+    // adjust position
+    goStraight(20.0, 25);
+    turnRight(right90 - 30, 25, 25);
+    goBackward(10.0, 25);
+    goBackTime(4.0, 25);
+    goStraight(1.0, 25);
+    turnLeft(left90,25,25);
+
+    // go down the ramp & hit button
+    goStraight(20.0, 15);
+
+    // hit the button
+    turnRight(right45, 25, 25);
+    goStraight(10.0, 25);
+
+}
+
+
