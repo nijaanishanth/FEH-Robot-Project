@@ -41,16 +41,10 @@ AnalogInputPin Cds_cell(FEHIO :: P1_0);
 DigitalEncoder right_encoder(FEHIO :: P0_0);
 DigitalEncoder left_encoder(FEHIO :: P3_0);
 
+void adjustGear();
+
 //Encoder has 318 counts per revolution
 //wheel radius and pi can be constants
-
-/*
-    goStraight Function Summary: The goStraight function takes in
-    two paratmeters: inces to travel and percent speed. The function calculate the 
-    number of revoluations the needed to travel that distance. Then the 
-    right and left motors are set at a certain speed until the right 
-    encoder has reached the specified number of counts. 
-*/
 void goStraight(float inches, int percent){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -63,13 +57,6 @@ void goStraight(float inches, int percent){
     left_motor.Stop();
 }
 
-/*
-    goStraightTime Function Summary: The goStraightTime function takes in
-    two parameters: time and motor percent. The function stores the 
-    time in a variables start_time and continues to drive the robot
-    until the current time mnus the start time is less than the time
-    specified in the parameter.
-*/
 void goStraightTime(float time, int percent)
 {
     float start_time = TimeNow();
@@ -82,13 +69,6 @@ void goStraightTime(float time, int percent)
     left_motor.Stop();
 }
 
-/*
-    goBackTime Function Summary: The goBackTime function takes in
-    two parameters: time and motor percent. The function stores the 
-    time in a variables start_time and continues to drive the robot
-    backward until the current time mnus the start time is less than the time
-    specified in the parameter.
-*/
 void goBackTime(float time, int percent)
 {
     float start_time = TimeNow();
@@ -101,13 +81,6 @@ void goBackTime(float time, int percent)
     left_motor.Stop();
 }
 
-/*
-    goBackward Function Summary: The goBackward function takes in
-    two paratmeters: inces to travel and percent speed. The function calculate the
-    number of revoluations the needed to travel that distance. Then the 
-    right and left motors are set at a certain speed until the right 
-    encoder has reached the specified number of counts. 
-*/
 void goBackward(float inches, int percent){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -120,13 +93,7 @@ void goBackward(float inches, int percent){
     left_motor.Stop();
 }
 
-/*
-    turnRight Function Summary: The tunRight function takes in 
-    three parameters: the number of counts, and percent speed of 
-    right and left motors. The function sets the motors and the 
-    speciied percents until the number of counts in the 
-    right encoder has reached the number in parameter. 
-*/
+// turn right function
 void turnRight(float counts, int percent_right, int percent_left){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -138,14 +105,7 @@ void turnRight(float counts, int percent_right, int percent_left){
     left_motor.Stop();
 }
 
-/*
-    turnPivotRight Function Summary: The tunPivoRight function takes in 
-    three parameters: the number of counts, and percent speed of 
-    right and left motors. The function sets the motors and the 
-    speciied percents until the number of counts in the 
-    right encoder has reached the number in parameter. One of the motors
-    is not moving, which is why the robot pivots
-*/
+// turn right when right wheel = 0
 void turnPivotRight(float counts, int percent_right, int percent_left){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -157,14 +117,7 @@ void turnPivotRight(float counts, int percent_right, int percent_left){
     left_motor.Stop();
 }
 
-/*
-    turnLeft Function Summary: The turnLeft function takes in 
-    three parameters: the number of counts, and percent speed of 
-    right and left motors. The function sets the motors and the 
-    specified percent, but at a negative value, 
-    until the number of counts in the 
-    right encoder has reached the number in parameter. 
-*/
+// turn left function
 void turnLeft(float counts, int percent_right, int percent_left){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -176,42 +129,37 @@ void turnLeft(float counts, int percent_right, int percent_left){
     left_motor.Stop();
 }
 
-/*
-    turnPivotLeft Function Summary: The turnPivotLeft function takes in 
-    three parameters: the number of counts, and percent speed of 
-    right and left motors. The function sets the motors and the 
-    speciied percents until the number of counts in the 
-    right encoder has reached the number in parameter. One of the motors
-    is not moving, which is why the robot pivots in the 
-    leftward direction
-*/
 void turnPivotLeft(float counts, int percent_right, int percent_left){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
     while(right_encoder.Counts() < counts){
-        right_motor.SetPercent(percent_right);
-        left_motor.SetPercent(percent_left);
+        right_motor.SetPercent(-percent_right);
+        left_motor.SetPercent(-percent_left);
     }
     right_motor.Stop();
     left_motor.Stop();
 }
 
-/*
-    DisplayCdSValue function summary: takes in an AnalogInputPin
-    and displays the value read by the CdS cell
-*/
+// display cds value function
 float DisplayCdSValue(AnalogInputPin Cds_cell){
     return Cds_cell.Value();
 }
 
+// checks if light is on
+// returns 0 if no light, otherwise 1
+int checkLight(AnalogInputPin Cds_cell){
+    if(Cds_cell.Value() > red)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
 
-
-/*
-    goUp Function Summary: takes in one paramter, time
-    stores the intial time as start_time and sets
-    the vex motors at a positive speed until the current time
-    minus the start_time is less than time
-*/
+// rack and pinion go up function
+/*2 seconds = 1.5 inches*/
 void goUp(float time)
 {
     float start_time = TimeNow();
@@ -222,12 +170,7 @@ void goUp(float time)
     vex_motor.Stop();
 }
 
-/*
-    goDown Function Summary: takes in one paramter, time
-    stores the intial time as start_time and sets
-    the vex motors at a negative speed until the current time
-    minus the start_time is less than time
-*/
+// rack and pinion go down function
 void goDown(float inches)
 {
     // 1 SECOND = 0.95 INCHES
@@ -242,14 +185,9 @@ void goDown(float inches)
 
 }
 
-/*
-    checkLightColor function summary: tkes in an AnalogInputPin
-    and if the value of teh CdS_cell is greater than 1.6,
-    returns character 'b' else it retursn 'r'
-*/
 char checkLightColor(AnalogInputPin Cds_cell)
 {
-    if(Cds_cell.Value() >= 1.2)
+    if(Cds_cell.Value() >= 1.4)
     {
         return 'b';
     }
@@ -258,8 +196,6 @@ char checkLightColor(AnalogInputPin Cds_cell)
         return 'r';
     }
 }
-
-void adjustGear();
 
 /* Main function */
 int main(void)
@@ -273,7 +209,7 @@ int main(void)
     // print battery to screen
     LCD.Write(Battery.Voltage());
     // while loop to sleep until cds cell is on
-    while(Cds_cell.Value() >= 1.4){
+    while(Cds_cell.Value() >= 2.0){
         Sleep(0.05);
     }
 
@@ -287,6 +223,11 @@ int main(void)
         goStraight(14.0, 25);
         turnRight(60, 25, 25);
     }
+    else if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'D')
+    {
+        goStraight(13.0, 25);
+        turnRight(70, 25, 25);
+    }
     else
     {
         goStraight(13.0, 25);
@@ -297,8 +238,15 @@ int main(void)
     goStraightTime(1.5, 40);
 
     // go back and reposition
-    goBackward(6.25, 25);
-    turnLeft(left90 - 30, 25, 25);
+    if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'D')
+    {
+        goBackward(6.0, 25);
+    }
+    else
+    {
+        goBackward(6.25, 25);
+    }
+    turnLeft(left90 - 28, 25, 25);
     goBackTime(4.0, 25);
 
     // go to the fuel lever
@@ -309,6 +257,9 @@ int main(void)
     goUp(0.55);
     goBackward(3.0,25);
     goDown(1.7);
+    Sleep(5.0);
+
+    // set the fuel lever down
     goStraight(3.0,25);
     goUp(1.65);
     goDown(0.5);
@@ -331,8 +282,8 @@ int main(void)
     goBackTime(3.0, 25);
     
     //Go to the light
-    goStraight(8.0, 25);
-    turnRight(right45, 25,25);
+    goStraight(9.0,25);
+    turnRight(right45,25,25);
     goStraight(20.0,25);
 
     //Read the light and right the color to the screen
@@ -342,32 +293,65 @@ int main(void)
 
     //Press the correct ticket button
     float redAdd = 0;
+    float rightTurn = 0;
     if(color == 'b')
     {
-        // FOR COURSE D THIS IS 7.0
-        goBackward(8.0, 25);
+        if(RCS.CurrentRegionLetter() == 'D' || RCS.CurrentRegionLetter() == 'A')
+        {
+            goBackward(7.0, 25);
+            rightTurn = 2;
+        }
+        else
+        {
+            goBackward(8.0, 25);
+        }
     }
     else
     {
-        goBackward(15.0, 25);
-        redAdd = 3.0;
+        if(RCS.CurrentRegionLetter() == 'A')
+        {
+            goBackward(14.5, 25);
+            redAdd = 3.5;
+        }
+        else
+        {
+            goBackward(15.0, 25);
+            redAdd = 3.0;
+            rightTurn = 1;
+        }
     }
-    turnRight(right45 + 3,25,25);
-    goStraight(2.5 + redAdd,25);
+    turnRight(right45 + 3 + rightTurn, 25, 25);
+    goStraight(2.5 + redAdd, 25);
     goStraightTime(1.0, 25);
 
     //Align against the wall
     goBackward(12.0,25);
     Sleep(0.5);
-    turnLeft(left45 + 50,25,25);
+    if(RCS.CurrentRegionLetter() == 'A')
+    {
+        turnLeft(left45 + 75, 25, 25);
+    }
+    else
+    {
+        turnLeft(left45 + 50, 25, 25);
+    }
     goBackward(10.0,25);
     goBackTime(2.5, 25);
     goDown(1.6);
 
     // positioning to passport stamp
-    goStraight(10.72,25);
-    turnLeft(left90, 25,25);
-    goBackward(11.2, 25);
+    if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'D' || RCS.CurrentRegionLetter() == 'C')
+    {
+        goStraight(10.725, 25);
+        turnLeft(left90 - 3, 25,25);
+        goBackward(11.4, 25);
+    }
+    else
+    {
+        goStraight(10.71, 25);
+        turnLeft(left90 - 3, 25,25);
+        goBackward(11.2, 25);
+    }
     Sleep(3.0);
 
     //completing the passport stamp
@@ -376,26 +360,27 @@ int main(void)
     goDown(1.45);
 
     // adjust position
-    goStraight(20.0, 25);
-    turnRight(right90 - 30, 25, 25);
+    goStraight(18.0, 25);
+    float addTurn = 0;
+    if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'D')
+    {
+        addTurn = 25;
+    }
+    turnRight(right90 - 30 + addTurn, 25, 25);
     goBackward(10.0, 25);
     goBackTime(4.0, 25);
     goStraight(1.0, 25);
-    turnLeft(left90,25,25);
+    turnPivotLeft(left90*2 - 40, 0, 25);
 
-    // go down the ramp & hit button
-    goStraight(20.0, 15);
+    // go down the ramp
+    goStraight(33.0, 15);
 
     // hit the button
-    turnRight(right45, 25, 25);
+    turnLeft(left45, 25, 25);
     goStraight(10.0, 25);
 
 }
 
-/*
-    adjustGear Function Summary: allows the gear
-    to be adjusted either up or down by either a small or large value
-*/
 void adjustGear(){
     float x_pos, y_pos;
     float x_trash, y_trash;
