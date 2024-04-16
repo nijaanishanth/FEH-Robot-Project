@@ -217,12 +217,7 @@ int main(void)
     
     // go to baggage
     goBackTime(0.4, 20);
-    if(RCS.CurrentRegionLetter() == 'C')
-    {
-        goStraight(14.0, 20);
-        turnRight(50, 25, 20);
-    }
-    else if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'D')
+    if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'D')
     {
         goStraight(13.0, 20);
         turnRight(60, 25, 20);
@@ -240,10 +235,6 @@ int main(void)
     if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'D')
     {
         goBackward(6.0, 20);
-    }
-    else if(RCS.CurrentRegionLetter() == 'C')
-    {
-        goBackward(6.25, 20);
     }
     else
     {
@@ -287,7 +278,7 @@ int main(void)
     //Go to the light
     goStraight(6.5, 25);
     turnRight(right45 + 3, 25, 25);
-    goStraight(20.0,25);
+    goStraight(21.0,25);
 
     //Read the light and right the color to the screen
     char color = checkLightColor(Cds_cell);
@@ -301,24 +292,24 @@ int main(void)
     {
         if(RCS.CurrentRegionLetter() == 'D' || RCS.CurrentRegionLetter() == 'A')
         {
-            goBackward(5.0, 25);
+            goBackward(6.0, 25);
             rightTurn = 2;
         }
         else
         {
-            goBackward(6.0, 25);
+            goBackward(7.0, 25);
         }
     }
     else
     {
-        if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'B')
+        if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'B'|| RCS.CurrentRegionLetter() == 'C')
         {
-            goBackward(11.5, 25);
+            goBackward(12.5, 25);
             redAdd = 3.5;
         }
         else
         {
-            goBackward(15.0, 25);
+            goBackward(16.0, 25);
             redAdd = 3.0;
             rightTurn = 1;
         }
@@ -343,7 +334,7 @@ int main(void)
     goDown(1.6);
 
     // positioning to passport stamp
-    if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'D' || RCS.CurrentRegionLetter() == 'C')
+    if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'D')
     {
         goStraight(10.725, 25);
         turnLeft(left90 - 3, 25,25);
@@ -377,7 +368,7 @@ int main(void)
     turnPivotLeft(left90*2 - 40, 25);
 
     // go down the ramp
-    goStraight(30.0, 15);
+    goStraight(25.0, 15);
 
     // hit the button
     turnLeft(left45, 25, 25);
