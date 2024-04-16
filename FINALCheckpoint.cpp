@@ -106,12 +106,12 @@ void turnRight(float counts, int percent_right, int percent_left){
 }
 
 // turn right when right wheel = 0
-void turnPivotRight(float counts, int percent_right, int percent_left){
+void turnPivotRight(float counts, int percent_right){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
     while(left_encoder.Counts() < counts){
         right_motor.SetPercent(percent_right);
-        left_motor.SetPercent(percent_left);
+        left_motor.SetPercent(0);
     }
     right_motor.Stop();
     left_motor.Stop();
@@ -129,11 +129,11 @@ void turnLeft(float counts, int percent_right, int percent_left){
     left_motor.Stop();
 }
 
-void turnPivotLeft(float counts, int percent_right, int percent_left){
+void turnPivotLeft(float counts, int percent_left){
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
     while(right_encoder.Counts() < counts){
-        right_motor.SetPercent(-percent_right);
+        right_motor.SetPercent(0);
         left_motor.SetPercent(-percent_left);
     }
     right_motor.Stop();
@@ -173,8 +173,8 @@ void goUp(float time)
 // rack and pinion go down function
 void goDown(float inches)
 {
-    // 1 SECOND = 0.95 INCHES
-    // MAX INCHES IS 7.5
+    // 1 second = 0.95 inches
+    // max inches is 7.5
     float time = inches/0.95;
     float start_time = TimeNow();
     while(TimeNow() - start_time < time)
@@ -204,7 +204,7 @@ int main(void)
 
     // FINAL CODE
     // initialize RCS
-    // RCS.InitializeTouchMenu("D30D1Hj1u");
+    RCS.InitializeTouchMenu("D30D1Hj1u");
 
     // print battery to screen
     LCD.Write(Battery.Voltage());
@@ -217,21 +217,21 @@ int main(void)
     //Lowest value for red light: 
     
     // go to baggage
-    goBackTime(0.4, 25);
+    goBackTime(0.4, 20);
     if(RCS.CurrentRegionLetter() == 'C')
     {
-        goStraight(14.0, 25);
-        turnRight(60, 25, 25);
+        goStraight(14.0, 20);
+        turnRight(50, 25, 20);
     }
     else if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'D')
     {
-        goStraight(13.0, 25);
-        turnRight(70, 25, 25);
+        goStraight(13.0, 20);
+        turnRight(60, 25, 20);
     }
     else
     {
-        goStraight(13.0, 25);
-        turnRight(70, 25, 25);
+        goStraight(13.0, 20);
+        turnRight(50, 25, 20);
     }
 
     // run into baggage
@@ -240,38 +240,38 @@ int main(void)
     // go back and reposition
     if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'D')
     {
-        goBackward(6.0, 25);
+        goBackward(6.0, 20);
     }
     else
     {
-        goBackward(6.25, 25);
+        goBackward(6.25, 20);
     }
-    turnLeft(left90 - 28, 25, 25);
-    goBackTime(4.0, 25);
+    turnLeft(left90 - 20, 25, 25);
+    goBackTime(4.0, 20);
 
     // go to the fuel lever
-    goStraight(18.0, 25);
+    goStraight(18.0, 20);
 
     //Lift the fuel lever up
     goDown(1.35);
     goUp(0.55);
-    goBackward(3.0,25);
+    goBackward(3.0, 20);
     goDown(1.7);
     Sleep(5.0);
 
     // set the fuel lever down
-    goStraight(3.0,25);
+    goStraight(3.0, 20);
     goUp(1.65);
     goDown(0.5);
-    goBackward(3.0, 25);
+    goBackward(3.0, 20);
 
     //Align against the wall before the ramp
-    goBackward(5.0, 25);
-    turnRight(50, 25, 25);
-    goBackward(6.0, 25);
-    goBackTime(2.0, 25);
-    turnPivotRight(right90*2 + 40, 25, 0);
-    goStraight(5.0, 25);
+    goBackward(5.0, 20);
+    turnRight(25, 25, 25);
+    goBackward(6.0, 20);
+    goBackTime(2.0, 20);
+    turnPivotRight(right90*2 + 37, 25);
+    goStraight(5.0, 20);
     Sleep(0.5);
 
     // up the ramp
@@ -282,8 +282,8 @@ int main(void)
     goBackTime(3.0, 25);
     
     //Go to the light
-    goStraight(9.0,25);
-    turnRight(right45,25,25);
+    goStraight(8.0, 25);
+    turnRight(right45 + 5, 25, 25);
     goStraight(20.0,25);
 
     //Read the light and right the color to the screen
@@ -350,27 +350,28 @@ int main(void)
     {
         goStraight(10.71, 25);
         turnLeft(left90 - 3, 25,25);
-        goBackward(11.2, 25);
+        goBackward(11.3, 25);
     }
     Sleep(3.0);
 
     //completing the passport stamp
     goUp(5.75);
     goBackward(7.0, 25);
+    goStraight(1.0, 25);
     goDown(1.45);
 
     // adjust position
-    goStraight(18.0, 25);
+    goStraight(17.0, 25);
     float addTurn = 0;
     if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'D')
     {
-        addTurn = 25;
+        addTurn = -5;
     }
-    turnRight(right90 - 30 + addTurn, 25, 25);
+    turnRight(right90 + addTurn, 25, 25);
     goBackward(10.0, 25);
     goBackTime(4.0, 25);
     goStraight(1.0, 25);
-    turnPivotLeft(left90*2 - 40, 0, 25);
+    turnPivotLeft(left90*2 - 40, 25);
 
     // go down the ramp
     goStraight(30.0, 15);
