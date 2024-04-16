@@ -1,5 +1,4 @@
 /* Include preprocessor directives */
-/* Include preprocessor directives */
 #include <FEHIO.h>
 #include <FEHUtility.h>
 #include <FEHMotor.h>
@@ -242,9 +241,13 @@ int main(void)
     {
         goBackward(6.0, 20);
     }
-    else
+    else if(RCS.CurrentRegionLetter() == 'C')
     {
         goBackward(6.25, 20);
+    }
+    else
+    {
+        goBackward(6.15, 20);
     }
     turnLeft(left90 - 20, 25, 25);
     goBackTime(4.0, 20);
@@ -270,7 +273,7 @@ int main(void)
     turnRight(25, 25, 25);
     goBackward(6.0, 20);
     goBackTime(2.0, 20);
-    turnPivotRight(right90*2 + 37, 25);
+    turnPivotRight(right90*2 + 39, 25);
     goStraight(5.0, 20);
     Sleep(0.5);
 
@@ -282,8 +285,8 @@ int main(void)
     goBackTime(3.0, 25);
     
     //Go to the light
-    goStraight(8.0, 25);
-    turnRight(right45 + 5, 25, 25);
+    goStraight(6.5, 25);
+    turnRight(right45 + 3, 25, 25);
     goStraight(20.0,25);
 
     //Read the light and right the color to the screen
@@ -298,19 +301,19 @@ int main(void)
     {
         if(RCS.CurrentRegionLetter() == 'D' || RCS.CurrentRegionLetter() == 'A')
         {
-            goBackward(7.0, 25);
+            goBackward(5.0, 25);
             rightTurn = 2;
         }
         else
         {
-            goBackward(8.0, 25);
+            goBackward(6.0, 25);
         }
     }
     else
     {
-        if(RCS.CurrentRegionLetter() == 'A')
+        if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'B')
         {
-            goBackward(14.5, 25);
+            goBackward(11.5, 25);
             redAdd = 3.5;
         }
         else
@@ -320,9 +323,9 @@ int main(void)
             rightTurn = 1;
         }
     }
-    turnRight(right45 + 3 + rightTurn, 25, 25);
+    turnRight(right45 + rightTurn, 25, 25);
     goStraight(2.5 + redAdd, 25);
-    goStraightTime(1.0, 25);
+    goStraightTime(1.5, 25);
 
     //Align against the wall
     goBackward(12.0,25);
