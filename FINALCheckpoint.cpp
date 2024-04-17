@@ -217,29 +217,15 @@ int main(void)
     
     // go to baggage
     goBackTime(0.4, 20);
-    if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'D')
-    {
-        goStraight(13.0, 20);
-        turnRight(60, 25, 20);
-    }
-    else
-    {
-        goStraight(13.0, 20);
-        turnRight(50, 25, 20);
-    }
+    goStraight(13.0, 20);
+    turnRight(50, 25, 20);
 
     // run into baggage
     goStraightTime(1.5, 40);
 
     // go back and reposition
-    if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'D')
-    {
-        goBackward(6.0, 20);
-    }
-    else
-    {
-        goBackward(6.15, 20);
-    }
+    goBackward(6.15, 20);
+
     turnLeft(left90 - 20, 25, 25);
     goBackTime(4.0, 20);
 
@@ -260,7 +246,14 @@ int main(void)
     goBackward(3.0, 20);
 
     //Align against the wall before the ramp
-    goBackward(5.0, 20);
+    if(RCS.CurrentRegionLetter() == 'A')
+    {
+        goBackward(4.7, 20);
+    }
+    else
+    {
+        goBackward(5.0, 20);
+    }
     turnRight(25, 25, 25);
     goBackward(6.0, 20);
     goBackTime(2.0, 20);
@@ -277,7 +270,14 @@ int main(void)
     
     //Go to the light
     goStraight(6.5, 25);
-    turnRight(right45 + 3, 25, 25);
+    if(RCS.CurrentRegionLetter() == 'A')
+    {
+        turnRight(right45, 25, 25);
+    }
+    else
+    {
+        turnRight(right45 + 3, 25, 25);
+    }
     goStraight(21.0,25);
 
     //Read the light and right the color to the screen
@@ -290,29 +290,13 @@ int main(void)
     float rightTurn = 0;
     if(color == 'b')
     {
-        if(RCS.CurrentRegionLetter() == 'D' || RCS.CurrentRegionLetter() == 'A')
-        {
-            goBackward(6.0, 25);
-            rightTurn = 2;
-        }
-        else
-        {
-            goBackward(7.0, 25);
-        }
+        goBackward(7.0, 25);
     }
     else
     {
-        if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'B'|| RCS.CurrentRegionLetter() == 'C')
-        {
-            goBackward(12.5, 25);
-            redAdd = 3.5;
-        }
-        else
-        {
-            goBackward(16.0, 25);
-            redAdd = 3.0;
-            rightTurn = 1;
-        }
+        goBackward(12.5, 25);
+        redAdd = 3.5;
+        rightTurn = 4;
     }
     turnRight(right45 + rightTurn, 25, 25);
     goStraight(2.5 + redAdd, 25);
@@ -321,31 +305,15 @@ int main(void)
     //Align against the wall
     goBackward(12.0,25);
     Sleep(0.5);
-    if(RCS.CurrentRegionLetter() == 'A')
-    {
-        turnLeft(left45 + 75, 25, 25);
-    }
-    else
-    {
-        turnLeft(left45 + 50, 25, 25);
-    }
+    turnLeft(left45 + 50, 25, 25);
     goBackward(10.0,25);
     goBackTime(2.5, 25);
     goDown(1.6);
 
     // positioning to passport stamp
-    if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'D')
-    {
-        goStraight(10.725, 25);
-        turnLeft(left90 - 3, 25,25);
-        goBackward(11.4, 25);
-    }
-    else
-    {
-        goStraight(10.71, 25);
-        turnLeft(left90 - 3, 25,25);
-        goBackward(11.3, 25);
-    }
+    goStraight(10.71, 25);
+    turnLeft(left90 - 3, 25,25);
+    goBackward(11.3, 25);
     Sleep(3.0);
 
     //completing the passport stamp
@@ -357,10 +325,6 @@ int main(void)
     // adjust position
     goStraight(17.0, 25);
     float addTurn = 0;
-    if(RCS.CurrentRegionLetter() == 'A' || RCS.CurrentRegionLetter() == 'D')
-    {
-        addTurn = -5;
-    }
     turnRight(right90 + addTurn, 25, 25);
     goBackward(10.0, 25);
     goBackTime(4.0, 25);
@@ -368,7 +332,7 @@ int main(void)
     turnPivotLeft(left90*2 - 40, 25);
 
     // go down the ramp
-    goStraight(25.0, 15);
+    goStraight(24.0, 15);
 
     // hit the button
     turnLeft(left45, 25, 25);
