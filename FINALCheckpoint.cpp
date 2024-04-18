@@ -45,12 +45,23 @@ void adjustGear();
 //Encoder has 318 counts per revolution
 //wheel radius and pi can be constants
 void goStraight(float inches, int percent){
+    float rightPower = percent;
+    float leftPower = percent;
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
     float num_revolutions = inches/(circ);
     while(right_encoder.Counts() < 318 * num_revolutions){
-        right_motor.SetPercent(percent);
-        left_motor.SetPercent(-percent);
+        right_motor.SetPercent(rightPower);
+        left_motor.SetPercent(-leftPower);
+        if(left_encoder.Counts() < right_encoder.Counts()){
+            
+            rightPower += 0.0001;
+        }
+        
+        if(right_encoder.Counts() < left_encoder.Counts()){
+           
+            leftPower += 0.0001;
+        }
     }
     right_motor.Stop();
     left_motor.Stop();
@@ -81,12 +92,24 @@ void goBackTime(float time, int percent)
 }
 
 void goBackward(float inches, int percent){
+    float leftPower = percent;
+    float rightPower = percent;
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
     float num_revolutions = inches/(circ);
     while(right_encoder.Counts() < 318 * num_revolutions){
-        right_motor.SetPercent(-percent);
-        left_motor.SetPercent(percent);
+        right_motor.SetPercent(-rightPower);
+        left_motor.SetPercent(leftPower);
+        if(left_encoder.Counts() < right_encoder.Counts()){
+           
+                rightPower += 0.0001;
+            
+            
+        } else if(right_encoder.Counts() < left_encoder.Counts()){
+            
+            leftPower += 0.0001;
+                 
+        }
     }
     right_motor.Stop();
     left_motor.Stop();
@@ -144,18 +167,6 @@ float DisplayCdSValue(AnalogInputPin Cds_cell){
     return Cds_cell.Value();
 }
 
-// checks if light is on
-// returns 0 if no light, otherwise 1
-int checkLight(AnalogInputPin Cds_cell){
-    if(Cds_cell.Value() > red)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
-}
 
 // rack and pinion go up function
 /*2 seconds = 1.5 inches*/
@@ -199,16 +210,21 @@ char checkLightColor(AnalogInputPin Cds_cell)
 /* Main function */
 int main(void)
 {
+
+
+    
     adjustGear();
 
     // FINAL CODE
     // initialize RCS
+     LCD.WriteLine(Cds_cell.Value());
+    Sleep(2.0);
     RCS.InitializeTouchMenu("D30D1Hj1u");
 
-    // print battery to screen
-    LCD.Write(Battery.Voltage());
+    LCD.WriteLine(Cds_cell.Value());
+    Sleep(2.0);
     // while loop to sleep until cds cell is on
-    while(Cds_cell.Value() >= 2.0){
+    while(Cds_cell.Value() >= 1.7){
         Sleep(0.05);
     }
 
@@ -224,13 +240,20 @@ int main(void)
     goStraightTime(1.5, 40);
 
     // go back and reposition
-    goBackward(6.15, 20);
-
+    if(RCS.CurrentCourse() == 'A'){
+        goBackward(6, 20);
+    }else{
+        goBackward(6.15, 20);
+    }
     turnLeft(left90 - 20, 25, 25);
     goBackTime(4.0, 20);
 
+    int i = 0;
     // go to the fuel lever
-    goStraight(18.0, 20);
+    //goStraight(18.0, 20);
+    for(i = 0; i < 6; i++){
+        goStraight(17.5/6, 20);
+    }
 
     //Lift the fuel lever up
     goDown(1.35);
@@ -257,7 +280,11 @@ int main(void)
     turnRight(25, 25, 25);
     goBackward(6.0, 20);
     goBackTime(2.0, 20);
-    turnPivotRight(right90*2 + 39, 25);
+    if(RCS.CurrentCourse() == 'D'){
+        turnPivotRight(right90*2 + 44, 25);
+    }else{
+        turnPivotRight(right90*2 + 39, 25);
+    }
     goStraight(5.0, 20);
     Sleep(0.5);
 
@@ -269,16 +296,23 @@ int main(void)
     goBackTime(3.0, 25);
     
     //Go to the light
-    goStraight(6.5, 25);
+    if(RCS.CurrentCourse() == 'A'){
+        goStraight(7.0, 25);
+    }else{
+        goStraight(7.5, 25);
+    }
     if(RCS.CurrentRegionLetter() == 'A')
     {
-        turnRight(right45, 25, 25);
+        turnRight(right45 - 5, 25, 25);
     }
     else
     {
-        turnRight(right45 + 3, 25, 25);
+        turnRight(right45, 25, 25);
     }
-    goStraight(21.0,25);
+    //goStraight(21.0,25);
+    for(i = 0; i < 5; i++){
+        goStraight(21.0/5, 25);
+    }
 
     //Read the light and right the color to the screen
     char color = checkLightColor(Cds_cell);
@@ -296,7 +330,7 @@ int main(void)
     {
         goBackward(12.5, 25);
         redAdd = 3.5;
-        rightTurn = 4;
+        rightTurn = 5;
     }
     turnRight(right45 + rightTurn, 25, 25);
     goStraight(2.5 + redAdd, 25);
@@ -305,15 +339,29 @@ int main(void)
     //Align against the wall
     goBackward(12.0,25);
     Sleep(0.5);
-    turnLeft(left45 + 50, 25, 25);
+    turnLeft(left90 - 10, 25, 25);
     goBackward(10.0,25);
     goBackTime(2.5, 25);
     goDown(1.6);
 
     // positioning to passport stamp
-    goStraight(10.71, 25);
-    turnLeft(left90 - 3, 25,25);
-    goBackward(11.3, 25);
+    if(RCS.CurrentCourse() == 'A'){
+        goStraight(10.80, 25);
+    }else if(RCS.CurrentCourse()== 'B'){
+        goStraight(10.80, 25);
+    }else{
+        goStraight(10.71, 25);
+    }
+
+    if(RCS.CurrentCourse()== 'B'){
+        turnLeft(left90 + 3, 25,25);
+    }else{
+        turnLeft(left90 - 4, 25,25);
+    }
+    //goBackward(11.3, 25);
+    for(int i=0; i<5; i++){
+        goBackward(10.7/5,25);
+    }
     Sleep(3.0);
 
     //completing the passport stamp
@@ -332,10 +380,10 @@ int main(void)
     turnPivotLeft(left90*2 - 40, 25);
 
     // go down the ramp
-    goStraight(24.0, 15);
+    goStraight(30.0, 15);
 
     // hit the button
-    turnLeft(left45, 25, 25);
+    turnLeft(left45 - 10, 25, 25);
     goStraight(10.0, 25);
 
 }
