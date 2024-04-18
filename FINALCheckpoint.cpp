@@ -197,7 +197,8 @@ void goDown(float inches)
 
 char checkLightColor(AnalogInputPin Cds_cell)
 {
-    if(Cds_cell.Value() >= 1.4)
+    LCD.Write(Cds_cell.Value());
+    if(Cds_cell.Value() >= 1.5)
     {
         return 'b';
     }
@@ -242,10 +243,11 @@ int main(void)
     // go back and reposition
     if(RCS.CurrentCourse() == 'A'){
         goBackward(6, 20);
+        turnLeft(left90 - 23, 25, 25);
     }else{
         goBackward(6.15, 20);
+        turnLeft(left90 - 29, 25, 25);
     }
-    turnLeft(left90 - 20, 25, 25);
     goBackTime(4.0, 20);
 
     int i = 0;
@@ -309,6 +311,7 @@ int main(void)
     {
         turnRight(right45, 25, 25);
     }
+
     //goStraight(21.0,25);
     for(i = 0; i < 5; i++){
         goStraight(21.0/5, 25);
@@ -324,13 +327,29 @@ int main(void)
     float rightTurn = 0;
     if(color == 'b')
     {
-        goBackward(7.0, 25);
+        goBackward(8.0, 25);
+        if(RCS.CurrentRegionLetter() == 'B')
+        {
+            goBackward(8.0, 25);
+        }
+        else
+        {
+            goBackward(8.0, 25);
+            rightTurn = 2;
+        }
     }
     else
     {
-        goBackward(12.5, 25);
+        if(RCS.CurrentRegionLetter() == 'B')
+        {
+            goBackward(15.0, 25);
+            rightTurn = 5;
+        }
+        else
+        {
+            goBackward(13.5, 25);
+        }
         redAdd = 3.5;
-        rightTurn = 5;
     }
     turnRight(right45 + rightTurn, 25, 25);
     goStraight(2.5 + redAdd, 25);
@@ -339,28 +358,37 @@ int main(void)
     //Align against the wall
     goBackward(12.0,25);
     Sleep(0.5);
-    turnLeft(left90 - 10, 25, 25);
+    if(RCS.CurrentRegionLetter() == 'B')
+    {
+        turnLeft(left90 - 15, 25, 25);
+    }
+    else
+    {
+        turnLeft(left90 - 10, 25, 25);
+    }
     goBackward(10.0,25);
     goBackTime(2.5, 25);
     goDown(1.6);
 
     // positioning to passport stamp
-    if(RCS.CurrentCourse() == 'A'){
+    if(RCS.CurrentCourse() == 'A')
+    {
+        goStraight(10.79, 25);
+        turnLeft(left90 - 4, 25, 25);
+    }
+    else if(RCS.CurrentCourse()== 'B')
+    {
         goStraight(10.80, 25);
-    }else if(RCS.CurrentCourse()== 'B'){
-        goStraight(10.80, 25);
-    }else{
+        turnLeft(left90 + 9, 25, 25);
+    }
+    else
+    {
         goStraight(10.71, 25);
+        turnLeft(left90 - 4, 25, 25);
     }
-
-    if(RCS.CurrentCourse()== 'B'){
-        turnLeft(left90 + 3, 25,25);
-    }else{
-        turnLeft(left90 - 4, 25,25);
-    }
-    //goBackward(11.3, 25);
-    for(int i=0; i<5; i++){
-        goBackward(10.7/5,25);
+    for(int i=0; i<5; i++)
+    {
+        goBackward(10.7/5, 25);
     }
     Sleep(3.0);
 
@@ -370,17 +398,19 @@ int main(void)
     goStraight(1.0, 25);
     goDown(1.45);
 
+    // adjust position before go straight
+    turnRight(20, 25, 25);
+
     // adjust position
     goStraight(17.0, 25);
-    float addTurn = 0;
-    turnRight(right90 + addTurn, 25, 25);
+    turnRight(right90 - 20, 25, 25);
     goBackward(10.0, 25);
     goBackTime(4.0, 25);
     goStraight(1.0, 25);
     turnPivotLeft(left90*2 - 40, 25);
 
     // go down the ramp
-    goStraight(30.0, 15);
+    goStraight(34.0, 15);
 
     // hit the button
     turnLeft(left45 - 10, 25, 25);
